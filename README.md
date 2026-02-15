@@ -7,7 +7,7 @@ Browse, compare, and visualize Gothenburg preschool quality surveys from 2007 to
 ## Architecture
 
 ```
-enkater.goteborg.se          PostgreSQL (NAS)        GitHub Pages
+enkater.goteborg.se          PostgreSQL              GitHub Pages
        │                          │                       │
        ▼                          ▼                       ▼
   ┌──────────┐    ┌────────┐    ┌────────┐    ┌────────┐    ┌──────────┐

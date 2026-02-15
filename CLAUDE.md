@@ -11,7 +11,7 @@
 
 - ESM-only (`"type": "module"` in all package.json)
 - TypeScript strict mode everywhere
-- PostgreSQL on NAS (192.168.0.187:5432), database: gr_enkater
+- PostgreSQL (localhost:5432), database: gr_enkater
 - Pipeline scripts: `npm run crawl`, `npm run download`, `npm run parse`, `npm run export`, `npm run sync`
 - Frontend uses HashRouter for GitHub Pages compatibility
 - Data attribution: "Göteborgs Regionen / Institutet för kvalitetsindikatorer"
