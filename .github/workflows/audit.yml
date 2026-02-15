@@ -1,0 +1,63 @@
+name: Security audit
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Every Monday at 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          cd pipeline && npm ci
+          cd ../frontend && npm ci
+
+      - name: Run audit
+        id: audit
+        run: |
+          set +e
+          echo "## Pipeline" > audit-report.md
+          echo '```' >> audit-report.md
+          cd pipeline && npm audit --omit=dev 2>&1 | tee -a ../audit-report.md
+          pipeline_exit=$?
+          cd ..
+          echo '```' >> audit-report.md
+          echo "" >> audit-report.md
+          echo "## Frontend" >> audit-report.md
+          echo '```' >> audit-report.md
+          cd frontend && npm audit --omit=dev 2>&1 | tee -a ../audit-report.md
+          frontend_exit=$?
+          cd ..
+          echo '```' >> audit-report.md
+
+          if [ $pipeline_exit -ne 0 ] || [ $frontend_exit -ne 0 ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create issue if vulnerabilities found
+        if: steps.audit.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing=$(gh issue list --label "security" --state open --json number --jq 'length')
+          if [ "$existing" -gt 0 ]; then
+            echo "Open security issue already exists, skipping."
+            exit 0
+          fi
+          gh issue create \
+            --title "npm audit: vulnerabilities found" \
+            --label "security" \
+            --body "$(cat audit-report.md)"
