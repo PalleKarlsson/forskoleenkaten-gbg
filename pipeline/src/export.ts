@@ -11,6 +11,9 @@ import { query, ensureSchema } from "./db.js";
 import pool from "./db.js";
 import { getScale, normalize } from "./normalize.js";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DATA_DIR = join(__dirname, "../../frontend/public/data");
+
 function slugify(s: string): string {
   return s
     .toLowerCase()

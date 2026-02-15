@@ -16,6 +16,7 @@
     "geocode:import": "tsx src/geocode-import.ts",
     "schema": "tsx src/schema-runner.ts",
     "test": "node --import tsx --test tests/parse.test.ts tests/normalize.test.ts",
+    "typecheck": "tsc -p tsconfig.check.json",
     "test:snapshot": "tsx tests/generate-snapshots.ts"
   },
   "dependencies": {
