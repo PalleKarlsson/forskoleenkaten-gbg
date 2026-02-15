@@ -116,16 +116,16 @@ export function Compare() {
         ))}
       </div>
 
-      <Section title="Bakgrund och svarsfrekvens">
-        <CompareDemographics schools={schools} colorMap={colorMap} />
-      </Section>
-
       <Section title="Jämförelse per frågeområde">
         <SchoolCompare schools={schools} colorMap={colorMap} />
       </Section>
 
       <Section title="Utveckling över tid">
         <CompareTrendChart schools={schools} colorMap={colorMap} />
+      </Section>
+
+      <Section title="Bakgrund och svarsfrekvens">
+        <CompareDemographics schools={schools} colorMap={colorMap} />
       </Section>
 
       <Section title="Avvikelse från genomsnitt">
