@@ -254,7 +254,7 @@ async function parseSinglePdf(reportId: number, pdfPath: string) {
 async function parseXlsReport(reportId: number, xlsPath: string, year: number) {
   console.log(`  Parsing XLS: ${xlsPath}`);
 
-  const units = parseXlsFile(xlsPath);
+  const units = await parseXlsFile(xlsPath);
   if (units.length === 0) {
     // Some XLS files have too few respondents (<7) and contain no data
     await query(

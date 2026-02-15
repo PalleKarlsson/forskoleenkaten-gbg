@@ -22,9 +22,9 @@
   "dependencies": {
     "cheerio": "^1.0.0",
     "dotenv": "^16.4.7",
+    "exceljs": "^4.4.0",
     "pdf2json": "^3.1.4",
-    "pg": "^8.13.1",
-    "xlsx": "^0.18.5"
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",

@@ -9,9 +9,11 @@
  *   - ID ending in 0000: district total
  *   - ID ending in X00 (not 0000): school group
  *   - ID ending in XNN (NN != 00): individual unit
+ *
+ * Original .xls (BIFF) files are pre-converted to .xlsx for ExcelJS compatibility.
  */
-import { readFileSync } from "node:fs";
-import * as XLSX from "xlsx";
+import { existsSync } from "node:fs";
+import ExcelJS from "exceljs";
 import { cleanQuestionText } from "./utils.js";
 
 export interface XlsUnitData {
@@ -51,8 +53,25 @@ function parseNum(val: unknown): number | null {
   return isNaN(n) ? null : n;
 }
 
-function parseSheet(ws: XLSX.WorkSheet, sheetId: string): XlsUnitData | null {
-  const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" }) as unknown[][];
+/** Read worksheet rows into a 0-indexed 2D array (matching old xlsx layout). */
+function sheetToArray(ws: ExcelJS.Worksheet): unknown[][] {
+  const rows: unknown[][] = [];
+  ws.eachRow({ includeEmpty: true }, (row, rowNumber) => {
+    // ExcelJS rows are 1-indexed; pad with empty arrays for any skipped rows
+    while (rows.length < rowNumber - 1) rows.push([]);
+    const cells: unknown[] = [];
+    // row.values is 1-indexed (index 0 is undefined)
+    const values = row.values as unknown[];
+    for (let i = 1; i < values.length; i++) {
+      cells.push(values[i] ?? "");
+    }
+    rows.push(cells);
+  });
+  return rows;
+}
+
+function parseSheet(ws: ExcelJS.Worksheet, sheetId: string): XlsUnitData | null {
+  const data = sheetToArray(ws);
   if (data.length < 10) return null;
 
   // Row 0, col 6: unit name
@@ -172,27 +191,39 @@ function findUnitSheetIds(sheetNames: string[]): Set<string> {
 }
 
 /**
- * Parse an XLS file and return data for all units found.
+ * Resolve the xlsx path for a given file path.
+ * If the path ends in .xls (not .xlsx), look for the pre-converted .xlsx version.
+ */
+function resolveXlsxPath(filePath: string): string {
+  if (filePath.endsWith(".xls") && !filePath.endsWith(".xlsx")) {
+    const xlsxPath = filePath + "x";
+    if (existsSync(xlsxPath)) return xlsxPath;
+  }
+  return filePath;
+}
+
+/**
+ * Parse an XLS/XLSX file and return data for all units found.
  * Returns leaf-node sheets only: individual units, or school groups
  * that have no sub-units (i.e., are themselves the finest granularity).
  * District totals (ID ending "0000") are always excluded.
  */
-export function parseXlsFile(filePath: string): XlsUnitData[] {
-  const buf = readFileSync(filePath);
-  const wb = XLSX.read(buf);
+export async function parseXlsFile(filePath: string): Promise<XlsUnitData[]> {
+  const resolvedPath = resolveXlsxPath(filePath);
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.readFile(resolvedPath);
 
-  const leafIds = findUnitSheetIds(wb.SheetNames);
+  const sheetNames = wb.worksheets.map((ws) => ws.name);
+  const leafIds = findUnitSheetIds(sheetNames);
   const results: XlsUnitData[] = [];
 
-  for (const sheetName of wb.SheetNames) {
+  for (const ws of wb.worksheets) {
+    const sheetName = ws.name;
     if (!sheetName.startsWith("T") || sheetName.startsWith("TD")) continue;
     if (sheetName === "Innehåll") continue;
 
     const numId = sheetName.replace(/^T/, "");
     if (!leafIds.has(numId)) continue;
-
-    const ws = wb.Sheets[sheetName];
-    if (!ws) continue;
 
     const parsed = parseSheet(ws, sheetName);
     if (!parsed) continue;

@@ -119,9 +119,9 @@ describe("XLS parser snapshot", () => {
   if (!existsSync(xlsPath) || !existsSync(join(SNAPSHOT_DIR, snapshotFile))) {
     it("XLS 2009 - skipped (missing test file or snapshot)", () => {});
   } else {
-    it("parseXlsFile matches snapshot", () => {
+    it("parseXlsFile matches snapshot", async () => {
       const snapshot = loadSnapshot(snapshotFile);
-      const result = parseXlsFile(xlsPath);
+      const result = await parseXlsFile(xlsPath);
       deepStrictEqual(jsonRoundTrip(result), snapshot);
     });
   }

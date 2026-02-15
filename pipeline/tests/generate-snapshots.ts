@@ -104,7 +104,7 @@ async function generateXlsSnapshot(): Promise<void> {
 
   console.log(`  Parsing test-2009.xls...`);
 
-  const units = parseXlsFile(xlsPath);
+  const units = await parseXlsFile(xlsPath);
 
   const snapshotPath = join(SNAPSHOT_DIR, "2009-xls.json");
   await writeFile(snapshotPath, JSON.stringify(units, null, 2));
