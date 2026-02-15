@@ -1,0 +1,151 @@
+{
+  "year": 2015,
+  "file": "test-2015.pdf",
+  "tables": {
+    "metadata": {
+      "schoolName": "",
+      "areaName": "",
+      "responseRate": 30,
+      "respondents": 31,
+      "totalInvited": null
+    },
+    "means": [
+      {
+        "questionText": "förskolan/familjedaghemmet ska vara rolig, trygg och lärorik för alla barn.",
+        "questionArea": "",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.5,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "du som förälder ska kunna känna att personalen tar väl hand om ditt barn.",
+        "questionArea": "",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.6,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "personalen ska ge föräldrar tydlig information. Förskolan/familjedaghemmet ska samarbeta med hemmen. Föräldrarna ska erbjudas olika sätt att få information på exempelvis",
+        "questionArea": "",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.5,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "föräldrar ska kunna vara med och påverka arbetet i förskolan/",
+        "questionArea": "",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.1,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "på förskolan/ familjedaghemmet ska barnen möta personal som",
+        "questionArea": "",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.3,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "enligt skollagen ska “huvudmannen se till att barngrupperna har",
+        "questionArea": "",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.4,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "förskolan/ familjedaghemmet ska ge barnen möjlighet att få vara med och ha inflytande på verksamhetens innehåll och ta",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.4,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "på förskolan/ familjedaghemmet ska barnen lära sig hur man",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.4,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "alla barn ska få känna glädjen av att lära sig, att de kan klara av sådant som är svårt och känna att de behövs i gruppen.",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.5,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "barnen ska kunna byta mellan olika aktiviteter under dagen sång, musik, drama, rytmik, dans eller rörelse.",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.6,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "förskolan/ familjedaghemmet ska ge varje barn möjlighet att",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.5,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "på förskolan/ familjedaghemmet ska barnen få möjlighet att",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.4,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "på förskolan/ familjedaghemmet ska varje barn få möjlighet att",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.3,
+        "historicalMeans": {}
+      },
+      {
+        "questionText": "förskolan/ familjedaghemmet ska arbeta för att flickor och pojkar ska ha samma möjligheter att pröva och utveckla vad de är",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": null,
+        "meanGoteborg": null,
+        "meanDistrict": null,
+        "meanSchool": 6.2,
+        "historicalMeans": {}
+      }
+    ],
+    "historicalYears": []
+  },
+  "responseDistributions": [],
+  "genderSplits": [],
+  "demographics": {
+    "birthYearDistribution": {},
+    "childGenderDistribution": {},
+    "parentGenderDistribution": {}
+  },
+  "importantQuestions": [],
+  "unitMeans": []
+}

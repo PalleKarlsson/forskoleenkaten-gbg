@@ -1,0 +1,24 @@
+{
+  "year": 2016,
+  "file": "test-2016.pdf",
+  "tables": {
+    "metadata": {
+      "schoolName": "",
+      "areaName": "",
+      "responseRate": null,
+      "respondents": null,
+      "totalInvited": null
+    },
+    "means": [],
+    "historicalYears": []
+  },
+  "responseDistributions": [],
+  "genderSplits": [],
+  "demographics": {
+    "birthYearDistribution": {},
+    "childGenderDistribution": {},
+    "parentGenderDistribution": {}
+  },
+  "importantQuestions": [],
+  "unitMeans": []
+}

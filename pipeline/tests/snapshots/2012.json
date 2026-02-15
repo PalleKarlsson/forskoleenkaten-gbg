@@ -1,0 +1,24 @@
+{
+  "year": 2012,
+  "file": "test-2012.pdf",
+  "tables": {
+    "metadata": {
+      "schoolName": "",
+      "areaName": "",
+      "responseRate": 21,
+      "respondents": 586,
+      "totalInvited": null
+    },
+    "means": [],
+    "historicalYears": []
+  },
+  "responseDistributions": [],
+  "genderSplits": [],
+  "demographics": {
+    "birthYearDistribution": {},
+    "childGenderDistribution": {},
+    "parentGenderDistribution": {}
+  },
+  "importantQuestions": [],
+  "unitMeans": []
+}

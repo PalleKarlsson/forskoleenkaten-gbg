@@ -1,0 +1,34 @@
+{
+  "name": "@forskoleenkaten-gbg/pipeline",
+  "version": "0.1.0",
+  "description": "Data pipeline for Gothenburg preschool survey extraction",
+  "type": "module",
+  "scripts": {
+    "crawl": "tsx src/crawler.ts",
+    "download": "tsx src/downloader.ts",
+    "parse": "tsx src/parser/index.ts",
+    "export": "tsx src/export.ts",
+    "pipeline": "tsx src/pipeline.ts",
+    "sync": "tsx src/pipeline.ts",
+    "geocode": "tsx src/geocode.ts",
+    "geocode:scb": "tsx src/geocode-scb.ts",
+    "geocode:missing": "tsx src/geocode-export-missing.ts",
+    "geocode:import": "tsx src/geocode-import.ts",
+    "schema": "tsx src/schema-runner.ts",
+    "test": "node --import tsx --test tests/parse.test.ts tests/normalize.test.ts",
+    "test:snapshot": "tsx tests/generate-snapshots.ts"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "dotenv": "^16.4.7",
+    "pdf2json": "^3.1.4",
+    "pg": "^8.13.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

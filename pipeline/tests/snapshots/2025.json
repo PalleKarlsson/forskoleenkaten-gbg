@@ -1,0 +1,981 @@
+{
+  "year": 2025,
+  "file": "test-2025.pdf",
+  "tables": {
+    "metadata": {
+      "schoolName": "Borgaregatan 5 förskola",
+      "areaName": "",
+      "responseRate": 48,
+      "respondents": 31,
+      "totalInvited": 65
+    },
+    "means": [
+      {
+        "questionText": "mitt barn trivs på förskolan",
+        "questionArea": "Trygghet och trivsel",
+        "meanGr": 4.57,
+        "meanGoteborg": 4.51,
+        "meanDistrict": 4.48,
+        "meanSchool": 4.26,
+        "historicalMeans": {
+          "2020": 4.63,
+          "2021": 4.43,
+          "2022": 4.45,
+          "2023": 4.37,
+          "2024": 4.5
+        }
+      },
+      {
+        "questionText": "mitt barn känner sig tryggt på förskolan",
+        "questionArea": "Trygghet och trivsel",
+        "meanGr": 4.53,
+        "meanGoteborg": 4.48,
+        "meanDistrict": 4.43,
+        "meanSchool": 4.1,
+        "historicalMeans": {
+          "2020": 4.44,
+          "2021": 4.37,
+          "2022": 4.53,
+          "2023": 4.23,
+          "2024": 4.47
+        }
+      },
+      {
+        "questionText": "mitt barn känner den personal som möter dem på förskolan",
+        "questionArea": "Trygghet och trivsel",
+        "meanGr": 4.49,
+        "meanGoteborg": 4.43,
+        "meanDistrict": 4.36,
+        "meanSchool": 4.23,
+        "historicalMeans": {
+          "2020": 4.54,
+          "2021": 4.55,
+          "2022": 4.16,
+          "2023": 4.3,
+          "2024": 4.32
+        }
+      },
+      {
+        "questionText": "personalen bemöter mitt barn på ett sätt som passar barnet",
+        "questionArea": "Trygghet och trivsel",
+        "meanGr": 4.48,
+        "meanGoteborg": 4.41,
+        "meanDistrict": 4.36,
+        "meanSchool": 3.84,
+        "historicalMeans": {
+          "2020": 4.42,
+          "2021": 4.4,
+          "2022": 4.13,
+          "2023": 4.13,
+          "2024": 4.19
+        }
+      },
+      {
+        "questionText": "förskolan stimulerar barnens samspel i grupp",
+        "questionArea": "Trygghet och trivsel",
+        "meanGr": 4.46,
+        "meanGoteborg": 4.39,
+        "meanDistrict": 4.33,
+        "meanSchool": 4.32,
+        "historicalMeans": {
+          "2020": 4.42,
+          "2021": 4.33,
+          "2022": 4.12,
+          "2023": 4.37,
+          "2024": 4.32
+        }
+      },
+      {
+        "questionText": "mitt barn ges möjlighet att bearbeta konflikter, reda ut missförstånd, kompromissa och respektera varandra",
+        "questionArea": "Trygghet och trivsel",
+        "meanGr": 4.35,
+        "meanGoteborg": 4.29,
+        "meanDistrict": 4.21,
+        "meanSchool": 3.86,
+        "historicalMeans": {
+          "2020": 4.31,
+          "2021": 4,
+          "2022": 4.19,
+          "2023": 4.25,
+          "2024": 4.22
+        }
+      },
+      {
+        "questionText": "barnen ges lika möjligheter att utvecklas oberoende av kön, etnisk tillhörighet, religion eller funktionsnedsättning",
+        "questionArea": "Trygghet och trivsel",
+        "meanGr": 4.55,
+        "meanGoteborg": 4.48,
+        "meanDistrict": 4.43,
+        "meanSchool": 4.08,
+        "historicalMeans": {
+          "2020": 4.41,
+          "2021": 4.42,
+          "2022": 4.36,
+          "2023": 4.38,
+          "2024": 4.14
+        }
+      },
+      {
+        "questionText": "förskolan ger det stöd som mitt barn behöver",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.38,
+        "meanGoteborg": 4.31,
+        "meanDistrict": 4.21,
+        "meanSchool": 4.1,
+        "historicalMeans": {
+          "2020": 4.34,
+          "2021": 4.39,
+          "2022": 3.97,
+          "2023": 4.1,
+          "2024": 4.25
+        }
+      },
+      {
+        "questionText": "förskolan ger den stimulans som mitt barn behöver",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.37,
+        "meanGoteborg": 4.28,
+        "meanDistrict": 4.16,
+        "meanSchool": 4.19,
+        "historicalMeans": {
+          "2020": 4.32,
+          "2021": 4.27,
+          "2022": 3.93,
+          "2023": 4.21,
+          "2024": 4.28
+        }
+      },
+      {
+        "questionText": "mitt barns förskola har en utemiljö som är inspirerande och inbjudande",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 3.99,
+        "meanGoteborg": 3.94,
+        "meanDistrict": 3.75,
+        "meanSchool": 2.9,
+        "historicalMeans": {
+          "2020": 3.94,
+          "2021": 3.7,
+          "2022": 3.55,
+          "2023": 3.4,
+          "2024": 3.58
+        }
+      },
+      {
+        "questionText": "mitt barns förskola har en innemiljö som är inspirerande och inbjudande",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.18,
+        "meanGoteborg": 4.12,
+        "meanDistrict": 3.89,
+        "meanSchool": 3.9,
+        "historicalMeans": {
+          "2020": 4.17,
+          "2021": 4.03,
+          "2022": 3.77,
+          "2023": 3.97,
+          "2024": 3.87
+        }
+      },
+      {
+        "questionText": "mitt barns förskola uppmuntrar till lek, utveckling och lärande",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.55,
+        "meanGoteborg": 4.48,
+        "meanDistrict": 4.41,
+        "meanSchool": 4.39,
+        "historicalMeans": {
+          "2020": 4.5,
+          "2021": 4.42,
+          "2022": 4.6,
+          "2023": 4.38,
+          "2024": 4.45
+        }
+      },
+      {
+        "questionText": "förskolan arbetar med att barnen oavsett könstillhörighet ges samma möjligheter, att pröva och utveckla vad de är bra på och vad de är intresserade av",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.57,
+        "meanGoteborg": 4.51,
+        "meanDistrict": 4.48,
+        "meanSchool": 4.22,
+        "historicalMeans": {
+          "2020": 4.35,
+          "2021": 4.3,
+          "2022": 4.32,
+          "2023": 4.21,
+          "2024": 4.31
+        }
+      },
+      {
+        "questionText": "språkutveckling och kommunikation",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.48,
+        "meanGoteborg": 4.4,
+        "meanDistrict": 4.36,
+        "meanSchool": 4.29,
+        "historicalMeans": {
+          "2020": 4.47,
+          "2021": 4.3,
+          "2022": 4.1,
+          "2023": 4.32,
+          "2024": 4.35
+        }
+      },
+      {
+        "questionText": "förmåga att skapa och uttrycka sig i olika former, exempelvis genom bild, form, rörelse, sång, musik, dans, drama",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.52,
+        "meanGoteborg": 4.45,
+        "meanDistrict": 4.35,
+        "meanSchool": 4.58,
+        "historicalMeans": {
+          "2020": 4.46,
+          "2021": 4.31,
+          "2022": 4.43,
+          "2023": 4.59,
+          "2024": 4.24
+        }
+      },
+      {
+        "questionText": "matematiska tänkande för att undersöka och reflektera, exempelvis genom användande av begrepp, form, mängd och sortering",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.35,
+        "meanGoteborg": 4.26,
+        "meanDistrict": 4.18,
+        "meanSchool": 4.32,
+        "historicalMeans": {
+          "2020": 4.43,
+          "2021": 3.95,
+          "2022": 3.88,
+          "2023": 4.13,
+          "2024": 4.09
+        }
+      },
+      {
+        "questionText": "förståelse för teknik och naturvetenskapliga fenomen, exempelvis genom samtal om kroppen, djur och natur eller genom olika experiment",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.37,
+        "meanGoteborg": 4.29,
+        "meanDistrict": 4.14,
+        "meanSchool": 4.07,
+        "historicalMeans": {
+          "2020": 4.3,
+          "2021": 3.95,
+          "2022": 4,
+          "2023": 4.3,
+          "2024": 4.09
+        }
+      },
+      {
+        "questionText": "förståelse för hur egna handlingar kan påverka miljön och bidra till en hållbar utveckling",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 4.29,
+        "meanGoteborg": 4.21,
+        "meanDistrict": 4.06,
+        "meanSchool": 4,
+        "historicalMeans": {
+          "2020": 4.21,
+          "2021": 4.14,
+          "2022": 4.05,
+          "2023": 4.2,
+          "2024": 4.06
+        }
+      },
+      {
+        "questionText": "jag upplever att mitt barn får använda digitala verktyg på ett sätt som stimulerar utveckling och lärande.",
+        "questionArea": "Utveckling och lärande",
+        "meanGr": 3.92,
+        "meanGoteborg": 3.84,
+        "meanDistrict": 3.58,
+        "meanSchool": 3.71,
+        "historicalMeans": {
+          "2020": 3.5,
+          "2021": 3.25,
+          "2022": 3.5,
+          "2023": 3.72,
+          "2024": 3.93
+        }
+      },
+      {
+        "questionText": "förskolan uppmuntrar mitt barn att uttrycka sina tankar och åsikter",
+        "questionArea": "Inflytande",
+        "meanGr": 4.42,
+        "meanGoteborg": 4.36,
+        "meanDistrict": 4.3,
+        "meanSchool": 3.9,
+        "historicalMeans": {
+          "2020": 4.38,
+          "2021": 4.21,
+          "2022": 4,
+          "2023": 4.19,
+          "2024": 4.24
+        }
+      },
+      {
+        "questionText": "förskolan tar hänsyn till mitt barns behov och intressen",
+        "questionArea": "Inflytande",
+        "meanGr": 4.37,
+        "meanGoteborg": 4.29,
+        "meanDistrict": 4.21,
+        "meanSchool": 4,
+        "historicalMeans": {
+          "2020": 4.29,
+          "2021": 4.27,
+          "2022": 3.97,
+          "2023": 4.17,
+          "2024": 4.14
+        }
+      },
+      {
+        "questionText": "förskolan tar hänsyn till den information jag förmedlar om mitt barn, till exempel om barnets mående, familjesituation eller utveckling",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 4.44,
+        "meanGoteborg": 4.36,
+        "meanDistrict": 4.32,
+        "meanSchool": 3.94,
+        "historicalMeans": {
+          "2020": 4.33,
+          "2021": 4.13,
+          "2022": 4.17,
+          "2023": 4.03,
+          "2024": 4.14
+        }
+      },
+      {
+        "questionText": "förskolan informerar om mål och innehåll i utbildningen",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 4.3,
+        "meanGoteborg": 4.23,
+        "meanDistrict": 4.09,
+        "meanSchool": 4.29,
+        "historicalMeans": {
+          "2020": 4.03,
+          "2021": 3.64,
+          "2022": 3.52,
+          "2023": 3.86,
+          "2024": 4.16
+        }
+      },
+      {
+        "questionText": "utvecklingssamtalet ger mig möjlighet till en god dialog kring mitt barns trivsel, utveckling och lärande",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 4.33,
+        "meanGoteborg": 4.22,
+        "meanDistrict": 4.12,
+        "meanSchool": 4.26,
+        "historicalMeans": {
+          "2020": 4.29,
+          "2021": 3.62,
+          "2022": 3.8,
+          "2023": 4.17,
+          "2024": 4.19
+        }
+      },
+      {
+        "questionText": "jag känner mig välkommen att ställa frågor och komma med synpunkter",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 4.43,
+        "meanGoteborg": 4.34,
+        "meanDistrict": 4.29,
+        "meanSchool": 3.84,
+        "historicalMeans": {
+          "2020": 4.44,
+          "2021": 3.97,
+          "2022": 3.87,
+          "2023": 4.03,
+          "2024": 4.16
+        }
+      },
+      {
+        "questionText": "jag känner mig trygg med att mitt barn blir väl omhändertaget på förskolan.",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 4.52,
+        "meanGoteborg": 4.44,
+        "meanDistrict": 4.38,
+        "meanSchool": 4.16,
+        "historicalMeans": {
+          "2020": 4.27,
+          "2021": 4.21,
+          "2022": 4.1,
+          "2023": 4.3,
+          "2024": 4.38
+        }
+      },
+      {
+        "questionText": "jag är nöjd med mitt barns förskola.",
+        "questionArea": "Helhetsomdöme",
+        "meanGr": 4.44,
+        "meanGoteborg": 4.34,
+        "meanDistrict": 4.22,
+        "meanSchool": 3.77,
+        "historicalMeans": {
+          "2020": 4.39,
+          "2021": 4.17,
+          "2022": 4.06,
+          "2023": 4.2,
+          "2024": 4.18
+        }
+      },
+      {
+        "questionText": "jag kan rekommendera mitt barns förskola till andra vårdnadshavare.",
+        "questionArea": "Helhetsomdöme",
+        "meanGr": 4.42,
+        "meanGoteborg": 4.31,
+        "meanDistrict": 4.18,
+        "meanSchool": 3.65,
+        "historicalMeans": {
+          "2020": 4.36,
+          "2021": 4.14,
+          "2022": 4.1,
+          "2023": 4.13,
+          "2024": 4.08
+        }
+      }
+    ],
+    "historicalYears": [
+      2024,
+      2023,
+      2022,
+      2021,
+      2020
+    ]
+  },
+  "responseDistributions": [
+    {
+      "questionText": "mitt barn trivs på förskolan",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 6,
+      "pctAgree": 48,
+      "pctStronglyAgree": 42,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "mitt barn känner sig tryggt på förskolan",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 6,
+      "pctAgree": 55,
+      "pctStronglyAgree": 32,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "mitt barn känner den personal som möter dem på förskolan",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 6,
+      "pctAgree": 52,
+      "pctStronglyAgree": 39,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "personalen bemöter mitt barn på ett sätt som passar barnet",
+      "pctStronglyDisagree": 6,
+      "pctDisagree": 6,
+      "pctNeither": 10,
+      "pctAgree": 52,
+      "pctStronglyAgree": 26,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "förskolan stimulerar barnens samspel i grupp",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 13,
+      "pctAgree": 29,
+      "pctStronglyAgree": 55,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "mitt barn ges möjlighet att bearbeta konflikter, reda ut missförstånd, kompromissa och respektera varandra",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 6,
+      "pctNeither": 19,
+      "pctAgree": 35,
+      "pctStronglyAgree": 29,
+      "pctDontKnow": 6
+    },
+    {
+      "questionText": "barnen ges lika möjligheter att utvecklas oberoende av kön, etnisk tillhörighet, religion eller funktionsnedsättning",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 6,
+      "pctNeither": 13,
+      "pctAgree": 19,
+      "pctStronglyAgree": 42,
+      "pctDontKnow": 16
+    },
+    {
+      "questionText": "förskolan ger det stöd som mitt barn behöver",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 6,
+      "pctNeither": 10,
+      "pctAgree": 39,
+      "pctStronglyAgree": 42,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "förskolan ger den stimulans som mitt barn behöver",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 6,
+      "pctNeither": 13,
+      "pctAgree": 35,
+      "pctStronglyAgree": 45,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "mitt barns förskola har en utemiljö som är inspirerande och inbjudande",
+      "pctStronglyDisagree": 13,
+      "pctDisagree": 19,
+      "pctNeither": 39,
+      "pctAgree": 23,
+      "pctStronglyAgree": 6,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "mitt barns förskola har en innemiljö som är inspirerande och inbjudande",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 6,
+      "pctNeither": 16,
+      "pctAgree": 45,
+      "pctStronglyAgree": 29,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "mitt barns förskola uppmuntrar till lek, utveckling och lärande",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 6,
+      "pctAgree": 35,
+      "pctStronglyAgree": 55,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "förskolan arbetar med att barnen oavsett könstillhörighet ges samma möjligheter, att pröva och utveckla vad de är bra på och vad de är intresserade av",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 16,
+      "pctAgree": 23,
+      "pctStronglyAgree": 45,
+      "pctDontKnow": 13
+    },
+    {
+      "questionText": "språkutveckling och kommunikation",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 10,
+      "pctAgree": 29,
+      "pctStronglyAgree": 55,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "förmåga att skapa och uttrycka sig i olika former, exempelvis genom bild, form, rörelse, sång, musik, dans, drama",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": null,
+      "pctAgree": 35,
+      "pctStronglyAgree": 61,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "matematiska tänkande för att undersöka och reflektera, exempelvis genom användande av begrepp, form, mängd och sortering",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 6,
+      "pctAgree": 35,
+      "pctStronglyAgree": 45,
+      "pctDontKnow": 10
+    },
+    {
+      "questionText": "förståelse för teknik och naturvetenskapliga fenomen, exempelvis genom samtal om kroppen, djur och natur eller genom olika experiment",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 13,
+      "pctAgree": 35,
+      "pctStronglyAgree": 35,
+      "pctDontKnow": 10
+    },
+    {
+      "questionText": "förståelse för hur egna handlingar kan påverka miljön och bidra till en hållbar utveckling Jag upplever att mitt barn får använda digitala verktyg på ett sätt som stimulerar",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 13,
+      "pctAgree": 35,
+      "pctStronglyAgree": 23,
+      "pctDontKnow": 26
+    },
+    {
+      "questionText": "förskolan uppmuntrar mitt barn att uttrycka sina tankar och åsikter",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 23,
+      "pctAgree": 39,
+      "pctStronglyAgree": 29,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "förskolan tar hänsyn till mitt barns behov och intressen",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 6,
+      "pctNeither": 13,
+      "pctAgree": 42,
+      "pctStronglyAgree": 35,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "förskolan tar hänsyn till den information jag förmedlar om mitt barn, till exempel om barnets mående, familjesituation eller utveckling",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 10,
+      "pctNeither": 23,
+      "pctAgree": 32,
+      "pctStronglyAgree": 35,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "förskolan informerar om mål och innehåll i utbildningen",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 6,
+      "pctAgree": 45,
+      "pctStronglyAgree": 45,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "utvecklingssamtalet ger mig möjlighet till en god dialog kring mitt barns trivsel, utveckling och lärande",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 13,
+      "pctAgree": 39,
+      "pctStronglyAgree": 45,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "jag känner mig välkommen att ställa frågor och komma med synpunkter",
+      "pctStronglyDisagree": 6,
+      "pctDisagree": 13,
+      "pctNeither": 13,
+      "pctAgree": 26,
+      "pctStronglyAgree": 42,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "jag känner mig trygg med att mitt barn blir väl omhändertaget på förskolan.",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 6,
+      "pctAgree": 42,
+      "pctStronglyAgree": 45,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "jag är nöjd med mitt barns förskola.",
+      "pctStronglyDisagree": 6,
+      "pctDisagree": 6,
+      "pctNeither": 23,
+      "pctAgree": 32,
+      "pctStronglyAgree": 32,
+      "pctDontKnow": null
+    },
+    {
+      "questionText": "jag kan rekommendera mitt barns förskola till andra vårdnadshavare.",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 16,
+      "pctNeither": 19,
+      "pctAgree": 32,
+      "pctStronglyAgree": 32,
+      "pctDontKnow": null
+    }
+  ],
+  "genderSplits": [
+    {
+      "questionText": "mitt barn trivs på förskolan",
+      "pctTotal": 90,
+      "pctFlicka": 100,
+      "pctPojke": 86
+    },
+    {
+      "questionText": "mitt barn känner sig tryggt på förskolan",
+      "pctTotal": 87,
+      "pctFlicka": 89,
+      "pctPojke": 86
+    },
+    {
+      "questionText": "mitt barn känner den personal som möter dem på förskolan",
+      "pctTotal": 90,
+      "pctFlicka": 89,
+      "pctPojke": 90
+    },
+    {
+      "questionText": "personalen bemöter mitt barn på ett sätt som passar barnet",
+      "pctTotal": 77,
+      "pctFlicka": 89,
+      "pctPojke": 76
+    },
+    {
+      "questionText": "förskolan stimulerar barnens samspel i grupp",
+      "pctTotal": 84,
+      "pctFlicka": 100,
+      "pctPojke": 81
+    },
+    {
+      "questionText": "mitt barn ges möjlighet att bearbeta konflikter, reda ut missförstånd, kompromissa och respektera varandra",
+      "pctTotal": 65,
+      "pctFlicka": 89,
+      "pctPojke": 57
+    },
+    {
+      "questionText": "barnen ges lika möjligheter att utvecklas oberoende av kön, etnisk tillhörighet, religion eller funktionsnedsättning",
+      "pctTotal": 61,
+      "pctFlicka": 67,
+      "pctPojke": 62
+    },
+    {
+      "questionText": "förskolan ger det stöd som mitt barn behöver",
+      "pctTotal": 81,
+      "pctFlicka": 89,
+      "pctPojke": 81
+    },
+    {
+      "questionText": "förskolan ger den stimulans som mitt barn behöver",
+      "pctTotal": 81,
+      "pctFlicka": 100,
+      "pctPojke": 76
+    },
+    {
+      "questionText": "mitt barns förskola har en utemiljö som är inspirerande och inbjudande",
+      "pctTotal": 29,
+      "pctFlicka": 11,
+      "pctPojke": 38
+    },
+    {
+      "questionText": "mitt barns förskola har en innemiljö som är inspirerande och inbjudande",
+      "pctTotal": 74,
+      "pctFlicka": 78,
+      "pctPojke": 71
+    },
+    {
+      "questionText": "mitt barns förskola uppmuntrar till lek, utveckling och lärande",
+      "pctTotal": 90,
+      "pctFlicka": 100,
+      "pctPojke": 86
+    },
+    {
+      "questionText": "förskolan arbetar med att barnen oavsett könstillhörighet ges samma möjligheter, att pröva och utveckla vad de är bra på och vad de är …",
+      "pctTotal": 68,
+      "pctFlicka": 78,
+      "pctPojke": 67
+    },
+    {
+      "questionText": "språkutveckling och kommunikation",
+      "pctTotal": 84,
+      "pctFlicka": 100,
+      "pctPojke": 76
+    },
+    {
+      "questionText": "förmåga att skapa och uttrycka sig i olika former, exempelvis genom bild, form, rörelse, sång, musik, dans, drama",
+      "pctTotal": 97,
+      "pctFlicka": 100,
+      "pctPojke": 95
+    },
+    {
+      "questionText": "matematiska tänkande för att undersöka och reflektera, exempelvis genom användande av begrepp, form, mängd och sortering",
+      "pctTotal": 81,
+      "pctFlicka": 78,
+      "pctPojke": 81
+    },
+    {
+      "questionText": "förståelse för teknik och naturvetenskapliga fenomen, exempelvis genom samtal om kroppen, djur och natur eller genom olika experiment",
+      "pctTotal": 71,
+      "pctFlicka": 89,
+      "pctPojke": 67
+    },
+    {
+      "questionText": "förståelse för hur egna handlingar kan påverka miljön och bidra till en hållbar utveckling",
+      "pctTotal": 58,
+      "pctFlicka": 78,
+      "pctPojke": 52
+    },
+    {
+      "questionText": "jag upplever att mitt barn får använda digitala verktyg på ett sätt som stimulerar utveckling och lärande.",
+      "pctTotal": 42,
+      "pctFlicka": 33,
+      "pctPojke": 48
+    },
+    {
+      "questionText": "förskolan uppmuntrar mitt barn att uttrycka sina tankar och åsikter",
+      "pctTotal": 68,
+      "pctFlicka": 100,
+      "pctPojke": 57
+    },
+    {
+      "questionText": "förskolan tar hänsyn till mitt barns behov och intressen",
+      "pctTotal": 77,
+      "pctFlicka": 89,
+      "pctPojke": 76
+    },
+    {
+      "questionText": "förskolan tar hänsyn till den information jag förmedlar om mitt barn, till exempel om barnets mående, familjesituation eller utveckling",
+      "pctTotal": 68,
+      "pctFlicka": 78,
+      "pctPojke": 67
+    },
+    {
+      "questionText": "förskolan informerar om mål och innehåll i utbildningen",
+      "pctTotal": 90,
+      "pctFlicka": 100,
+      "pctPojke": 86
+    },
+    {
+      "questionText": "utvecklingssamtalet ger mig möjlighet till en god dialog kring mitt barns trivsel, utveckling och lärande",
+      "pctTotal": 84,
+      "pctFlicka": 100,
+      "pctPojke": 81
+    },
+    {
+      "questionText": "jag känner mig välkommen att ställa frågor och komma med synpunkter",
+      "pctTotal": 68,
+      "pctFlicka": 78,
+      "pctPojke": 67
+    },
+    {
+      "questionText": "jag känner mig trygg med att mitt barn blir väl omhändertaget på förskolan.",
+      "pctTotal": 87,
+      "pctFlicka": 100,
+      "pctPojke": 81
+    },
+    {
+      "questionText": "jag är nöjd med mitt barns förskola.",
+      "pctTotal": 65,
+      "pctFlicka": 78,
+      "pctPojke": 62
+    },
+    {
+      "questionText": "jag kan rekommendera mitt barns förskola till andra vårdnadshavare.",
+      "pctTotal": 65,
+      "pctFlicka": 78,
+      "pctPojke": 62
+    }
+  ],
+  "demographics": {
+    "birthYearDistribution": {},
+    "childGenderDistribution": {},
+    "parentGenderDistribution": {}
+  },
+  "importantQuestions": [
+    {
+      "rank": 1,
+      "questionText": "mitt barn trivs på förskolan",
+      "pct": 70
+    },
+    {
+      "rank": 2,
+      "questionText": "mitt barn känner sig tryggt på förskolan",
+      "pct": 63
+    },
+    {
+      "rank": 3,
+      "questionText": "jag känner mig trygg med att mitt barn blir väl omhändertaget på förskolan",
+      "pct": 43
+    },
+    {
+      "rank": 4,
+      "questionText": "mitt barn känner den personal som möter dem på förskolan",
+      "pct": 37
+    },
+    {
+      "rank": 5,
+      "questionText": "förskolan ger det stöd som mitt barn behöver",
+      "pct": 33
+    }
+  ],
+  "unitMeans": [
+    {
+      "unitName": "Borgaregatan 5 förskola",
+      "areaName": "Trygghet",
+      "meanValue": 4.1
+    },
+    {
+      "unitName": "Borgaregatan 5 förskola",
+      "areaName": "Utveckling",
+      "meanValue": 3.77
+    },
+    {
+      "unitName": "Borgaregatan 5 förskola",
+      "areaName": "Inflytande",
+      "meanValue": 4.22
+    },
+    {
+      "unitName": "Borgaregatan 5 förskola",
+      "areaName": "Relation",
+      "meanValue": 3.95
+    },
+    {
+      "unitName": "Borgaregatan 5 förskola",
+      "areaName": "Helhet",
+      "meanValue": 4.1
+    },
+    {
+      "unitName": "Borgaregatan 5 förskola",
+      "areaName": "Övergripande",
+      "meanValue": 3.71
+    },
+    {
+      "unitName": "Grodan",
+      "areaName": "Trygghet",
+      "meanValue": 4.38
+    },
+    {
+      "unitName": "Grodan",
+      "areaName": "Utveckling",
+      "meanValue": 3.86
+    },
+    {
+      "unitName": "Grodan",
+      "areaName": "Inflytande",
+      "meanValue": 4.46
+    },
+    {
+      "unitName": "Grodan",
+      "areaName": "Relation",
+      "meanValue": 3.96
+    },
+    {
+      "unitName": "Grodan",
+      "areaName": "Helhet",
+      "meanValue": 4.17
+    },
+    {
+      "unitName": "Grodan",
+      "areaName": "Övergripande",
+      "meanValue": 3.86
+    },
+    {
+      "unitName": "NYCKELPIGAN",
+      "areaName": "Trygghet",
+      "meanValue": 3.7
+    },
+    {
+      "unitName": "NYCKELPIGAN",
+      "areaName": "Utveckling",
+      "meanValue": 3.69
+    },
+    {
+      "unitName": "NYCKELPIGAN",
+      "areaName": "Inflytande",
+      "meanValue": 3.87
+    },
+    {
+      "unitName": "NYCKELPIGAN",
+      "areaName": "Relation",
+      "meanValue": 3.88
+    },
+    {
+      "unitName": "NYCKELPIGAN",
+      "areaName": "Helhet",
+      "meanValue": 3.95
+    },
+    {
+      "unitName": "NYCKELPIGAN",
+      "areaName": "Övergripande",
+      "meanValue": 3.38
+    }
+  ]
+}

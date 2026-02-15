@@ -1,0 +1,297 @@
+{
+  "year": 2017,
+  "file": "test-2017.pdf",
+  "tables": {
+    "metadata": {
+      "schoolName": "",
+      "areaName": "",
+      "responseRate": 39,
+      "respondents": 19,
+      "totalInvited": 49
+    },
+    "means": [
+      {
+        "questionText": "förskolan är rolig, trygg och lärorik för alla barn",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.7,
+        "meanGoteborg": 5.7,
+        "meanDistrict": 5.7,
+        "meanSchool": 5.6,
+        "historicalMeans": {
+          "2015": 5.6,
+          "2016": 4.9,
+          "2017": 5.6
+        }
+      },
+      {
+        "questionText": "personalen tar väl hand om mitt barn",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.7,
+        "meanGoteborg": 5.6,
+        "meanDistrict": 5.6,
+        "meanSchool": 5.4,
+        "historicalMeans": {
+          "2015": 5.4,
+          "2016": 5.1,
+          "2017": 5.4
+        }
+      },
+      {
+        "questionText": "personalen ger föräldrar tydlig information",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.3,
+        "meanGoteborg": 5.2,
+        "meanDistrict": 5.4,
+        "meanSchool": 5.2,
+        "historicalMeans": {
+          "2015": 5.5,
+          "2016": 4.8,
+          "2017": 5.2
+        }
+      },
+      {
+        "questionText": "föräldrar får möjlighet att vara med och påverka arbetet i förskolan",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5,
+        "meanGoteborg": 4.8,
+        "meanDistrict": 5.2,
+        "meanSchool": 5.1,
+        "historicalMeans": {
+          "2015": 5.3,
+          "2016": 4.9,
+          "2017": 5.1
+        }
+      },
+      {
+        "questionText": "barnen möter personal som de känner",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.7,
+        "meanGoteborg": 5.6,
+        "meanDistrict": 5.5,
+        "meanSchool": 5.3,
+        "historicalMeans": {
+          "2015": 5.5,
+          "2016": 4.9,
+          "2017": 5.3
+        }
+      },
+      {
+        "questionText": "barnen har möjlighet att ingå i mindre och större grupper",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.5,
+        "meanGoteborg": 5.4,
+        "meanDistrict": 5.5,
+        "meanSchool": 5.3,
+        "historicalMeans": {
+          "2015": 5.4,
+          "2016": 4.8,
+          "2017": 5.3
+        }
+      },
+      {
+        "questionText": "barnen har möjlighet att ha inflytande på verksamhetens innehåll",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.5,
+        "meanGoteborg": 5.4,
+        "meanDistrict": 5.4,
+        "meanSchool": 5.1,
+        "historicalMeans": {
+          "2015": 5,
+          "2016": 4.5,
+          "2017": 5.1
+        }
+      },
+      {
+        "questionText": "barnen lär sig hur man fungerar tillsammans i en grupp",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.8,
+        "meanGoteborg": 5.8,
+        "meanDistrict": 5.6,
+        "meanSchool": 5.8,
+        "historicalMeans": {
+          "2015": 5.5,
+          "2016": 5.1,
+          "2017": 5.8
+        }
+      },
+      {
+        "questionText": "barnen får känna glädjen av att lära sig och känna att de behövs i gruppen",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.7,
+        "meanGoteborg": 5.6,
+        "meanDistrict": 5.6,
+        "meanSchool": 5.3,
+        "historicalMeans": {
+          "2015": 5.5,
+          "2016": 4.8,
+          "2017": 5.3
+        }
+      },
+      {
+        "questionText": "barnen kan byta mellan olika aktiviteter under dagen",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.6,
+        "meanGoteborg": 5.5,
+        "meanDistrict": 5.6,
+        "meanSchool": 5.6,
+        "historicalMeans": {
+          "2015": 5.5,
+          "2016": 5,
+          "2017": 5.6
+        }
+      },
+      {
+        "questionText": "barnen har möjlighet att utveckla språket",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.7,
+        "meanGoteborg": 5.6,
+        "meanDistrict": 5.6,
+        "meanSchool": 5.6,
+        "historicalMeans": {
+          "2015": 5.6,
+          "2016": 5.2,
+          "2017": 5.6
+        }
+      },
+      {
+        "questionText": "barnen får möjlighet att utveckla förståelse för matematik",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.4,
+        "meanGoteborg": 5.3,
+        "meanDistrict": 5.2,
+        "meanSchool": 4.4,
+        "historicalMeans": {
+          "2015": 4.5,
+          "2016": 4.3,
+          "2017": 4.4
+        }
+      },
+      {
+        "questionText": "barnen får möjlighet att utveckla förståelse för naturvetenskap",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.4,
+        "meanGoteborg": 5.3,
+        "meanDistrict": 5.3,
+        "meanSchool": 4.7,
+        "historicalMeans": {
+          "2015": 5,
+          "2016": 4.8,
+          "2017": 4.7
+        }
+      },
+      {
+        "questionText": "flickor och pojkar har samma möjligheter",
+        "questionArea": "Relation och kommunikation",
+        "meanGr": 5.8,
+        "meanGoteborg": 5.8,
+        "meanDistrict": 5.8,
+        "meanSchool": 5.7,
+        "historicalMeans": {
+          "2015": 5.6,
+          "2016": 4.9,
+          "2017": 5.7
+        }
+      }
+    ],
+    "historicalYears": [
+      2017,
+      2016,
+      2015
+    ]
+  },
+  "responseDistributions": [
+    {
+      "questionText": "förskolan är rolig, trygg och lärorik för alla barn 5.6 4.9 5.6 5.7 5.7 5.7",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 5,
+      "pctNeither": 5,
+      "pctAgree": 42,
+      "pctStronglyAgree": 21,
+      "pctDontKnow": 26
+    },
+    {
+      "questionText": "personalen tar väl hand om mitt barn 5.4 5.1 5.4 5.6 5.6 5.7",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 11,
+      "pctNeither": 5,
+      "pctAgree": 42,
+      "pctStronglyAgree": 21,
+      "pctDontKnow": 21
+    },
+    {
+      "questionText": "personalen ger föräldrar tydlig information 5.2 4.8 5.5 5.4 5.2 5.3",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 11,
+      "pctNeither": 5,
+      "pctAgree": 58,
+      "pctStronglyAgree": 5,
+      "pctDontKnow": 21
+    },
+    {
+      "questionText": "barnen möter personal som de känner 5.3 4.9 5.5 5.5 5.6 5.7",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 5,
+      "pctAgree": 16,
+      "pctStronglyAgree": 47,
+      "pctDontKnow": 32
+    },
+    {
+      "questionText": "barnen lär sig hur man fungerar tillsammans i en grupp 5.8 5.1 5.5 5.6 5.8 5.8",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": null,
+      "pctAgree": 53,
+      "pctStronglyAgree": 32,
+      "pctDontKnow": 16
+    },
+    {
+      "questionText": "barnen kan byta mellan olika aktiviteter under dagen 5.6 5.0 5.5 5.6 5.5 5.6",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 58,
+      "pctAgree": 21,
+      "pctStronglyAgree": 16,
+      "pctDontKnow": 5
+    },
+    {
+      "questionText": "barnen har möjlighet att utveckla språket 5.6 5.2 5.6 5.6 5.6 5.7",
+      "pctStronglyDisagree": null,
+      "pctDisagree": 5,
+      "pctNeither": 47,
+      "pctAgree": 16,
+      "pctStronglyAgree": 21,
+      "pctDontKnow": 11
+    },
+    {
+      "questionText": "flickor och pojkar har samma möjligheter 5.7 4.9 5.6 5.8 5.8 5.8",
+      "pctStronglyDisagree": null,
+      "pctDisagree": null,
+      "pctNeither": 47,
+      "pctAgree": 5,
+      "pctStronglyAgree": 26,
+      "pctDontKnow": 21
+    }
+  ],
+  "genderSplits": [
+    {
+      "questionText": "och bygger på svar från 19 vårdnadshavare av 49 möjliga, alltså 38. Könsuppdelad andel positiva Förskole-/familjedaghemsenkät 2017 Nedan visas andel positiva per frågeområde tillsammans med de frågor som ingår i varje område. Svaren redovisas även uppdelade på vilket kön barnet ⋅har. FÖRUTSÄTTNINGAR Barnen har möjlighet att ingå i mindre och större grupper Barnen kan byta mellan olika aktiviteter under dagen Flickor och pojkar har samma möjligheter PEDAGOGIK Barnen har möjlighet att utveckla spr",
+      "pctTotal": 8,
+      "pctFlicka": 8,
+      "pctPojke": 53
+    },
+    {
+      "questionText": "vi är fler Man Kvinna",
+      "pctTotal": 11,
+      "pctFlicka": 5,
+      "pctPojke": 0
+    }
+  ],
+  "demographics": {
+    "birthYearDistribution": {},
+    "childGenderDistribution": {},
+    "parentGenderDistribution": {}
+  },
+  "importantQuestions": [],
+  "unitMeans": []
+}
