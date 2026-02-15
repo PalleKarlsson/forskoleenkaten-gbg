@@ -2,7 +2,7 @@
 
 Browse, compare, and visualize Gothenburg preschool quality surveys from 2007 to 2025. The Gothenburg Region (GR) publishes annual preschool surveys as individual PDF/XLS reports across ~12,000 reports spanning 5 format eras. This project extracts all data into a searchable, interactive static website.
 
-**[Live site](https://staphy.github.io/forskoleenkaten-gbg/)**
+**[Live site](https://forskoleenkaten-gbg.se)**
 
 ## Architecture
 
