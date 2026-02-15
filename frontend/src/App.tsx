@@ -72,10 +72,37 @@ function NavHeader() {
   );
 }
 
+function DataNotice() {
+  return (
+    <div
+      style={{
+        padding: "6px 16px",
+        background: "#1c2128",
+        borderBottom: "1px solid #30363d",
+        fontSize: 12,
+        color: "#848d97",
+        textAlign: "center",
+      }}
+    >
+      All data has been parsed programmatically from PDF/XLS reports and may contain errors.
+      {" "}
+      <a
+        href="https://github.com/PalleKarlsson/forskoleenkaten-gbg/issues/new?template=data_error.md"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: "#58a6ff", textDecoration: "none" }}
+      >
+        Report a data error
+      </a>
+    </div>
+  );
+}
+
 export function App() {
   return (
     <HashRouter>
       <NavHeader />
+      <DataNotice />
       <Routes>
         <Route path="/" element={<MapHome />} />
         <Route path="/browse" element={<Home />} />
