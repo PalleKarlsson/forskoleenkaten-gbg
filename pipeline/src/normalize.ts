@@ -1,7 +1,22 @@
 /**
- * Normalization utilities for survey mean values.
- * Shared between export.ts and tests.
+ * Normalization utilities for survey values and school names.
+ * Shared between crawler, geocoder, export, and tests.
  */
+
+/**
+ * Clean up a school name for display and geocoding.
+ * - Strips .pdf suffix
+ * - For address-based names, strips trailing "förskola"/"förskolan"/"fsk"
+ * - Trims whitespace
+ */
+export function cleanSchoolName(name: string): string {
+  let s = name.trim();
+  // Strip .pdf suffix
+  s = s.replace(/\.pdf$/i, "");
+  // Strip trailing " förskola", " förskolan", " fsk" as separate words
+  s = s.replace(/\s+(?:förskolan?|fsk)$/i, "");
+  return s.trim();
+}
 
 /**
  * Determine the measurement scale for a given year.

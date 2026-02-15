@@ -3,7 +3,7 @@
  */
 import { describe, it } from "node:test";
 import { strictEqual, deepStrictEqual } from "node:assert";
-import { getScale, normalize } from "../src/normalize.js";
+import { getScale, normalize, cleanSchoolName } from "../src/normalize.js";
 
 describe("getScale", () => {
   it("returns 1-3 for years <= 2009", () => {
@@ -60,5 +60,31 @@ describe("normalize", () => {
     strictEqual(normalize(1, 2024), 0);
     // Max value → 100
     strictEqual(normalize(5, 2024), 100);
+  });
+});
+
+describe("cleanSchoolName", () => {
+  it("strips .pdf suffix", () => {
+    strictEqual(cleanSchoolName("Borgaregatan 5 förskola.pdf"), "Borgaregatan 5");
+    strictEqual(cleanSchoolName("Askims Montessori fsk.pdf"), "Askims Montessori");
+  });
+
+  it("strips trailing förskola/förskolan/fsk", () => {
+    strictEqual(cleanSchoolName("Borgaregatan 5 förskola"), "Borgaregatan 5");
+    strictEqual(cleanSchoolName("Apelsingatan 15 förskolan"), "Apelsingatan 15");
+    strictEqual(cleanSchoolName("Askims Montessori fsk"), "Askims Montessori");
+  });
+
+  it("preserves names without suffixes", () => {
+    strictEqual(cleanSchoolName("Förskolan Fyren"), "Förskolan Fyren");
+    strictEqual(cleanSchoolName("Lilla Viljaskolan"), "Lilla Viljaskolan");
+  });
+
+  it("preserves compound words containing förskola", () => {
+    strictEqual(cleanSchoolName("Askims Montessoriförskola"), "Askims Montessoriförskola");
+  });
+
+  it("trims whitespace", () => {
+    strictEqual(cleanSchoolName("  Borgaregatan 5  "), "Borgaregatan 5");
   });
 });

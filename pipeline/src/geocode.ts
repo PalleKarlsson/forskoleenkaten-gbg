@@ -6,6 +6,7 @@ import "dotenv/config";
 import { query } from "./db.js";
 import pool from "./db.js";
 import { ensureSchema } from "./db.js";
+import { cleanSchoolName } from "./normalize.js";
 
 const USER_AGENT = "forskoleenkaten-gbg/1.0";
 const VIEWBOX = "11.5,57.5,12.3,58.1";
@@ -43,21 +44,24 @@ async function nominatimSearch(q: string): Promise<NominatimResult | null> {
 }
 
 async function geocodeSchool(name: string, areaName: string): Promise<{ lat: number; lng: number } | null> {
+  // Clean name before geocoding (strip .pdf, trailing förskola/fsk)
+  const cleaned = cleanSchoolName(name);
+
   // Strategy 1: Strip "förskola"/"förskolan" suffix, search with Göteborg
-  const stripped = name.replace(/\s*(förskolan?)\s*$/i, "").trim();
-  if (stripped !== name) {
+  const stripped = cleaned.replace(/\s*(förskolan?)\s*$/i, "").trim();
+  if (stripped !== cleaned) {
     const result = await nominatimSearch(`${stripped} förskola, Göteborg`);
     if (result) return { lat: parseFloat(result.lat), lng: parseFloat(result.lon) };
     await sleep(1100);
   }
 
   // Strategy 2: Full name + Göteborg
-  const result2 = await nominatimSearch(`${name}, Göteborg`);
+  const result2 = await nominatimSearch(`${cleaned}, Göteborg`);
   if (result2) return { lat: parseFloat(result2.lat), lng: parseFloat(result2.lon) };
   await sleep(1100);
 
   // Strategy 3: Name + area name + Göteborg
-  const result3 = await nominatimSearch(`${name}, ${areaName}, Göteborg`);
+  const result3 = await nominatimSearch(`${cleaned}, ${areaName}, Göteborg`);
   if (result3) return { lat: parseFloat(result3.lat), lng: parseFloat(result3.lon) };
 
   return null;

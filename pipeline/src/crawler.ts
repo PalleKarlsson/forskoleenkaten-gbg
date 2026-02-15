@@ -7,6 +7,7 @@ import "dotenv/config";
 import * as cheerio from "cheerio";
 import { query, ensureSchema } from "./db.js";
 import pool from "./db.js";
+import { cleanSchoolName } from "./normalize.js";
 
 const BASE_URL = "https://enkater.goteborg.se";
 const DELAY_MS = 500;
@@ -257,7 +258,7 @@ function parseSchoolFromLinkText(linkText: string): { schoolName: string; unitNa
   if (dashMatch) {
     const remainder = dashMatch[1]; // "Albotorget 5-Junibacken" or "Albotorget 5"
     const dashParts = remainder.split("-");
-    const schoolName = dashParts[0].trim();
+    const schoolName = cleanSchoolName(dashParts[0]);
     const unitName = dashParts.length >= 2 ? dashParts.slice(1).join("-").trim() : null;
     return { schoolName, unitName };
   }
@@ -274,14 +275,14 @@ function parseSchoolFromLinkText(linkText: string): { schoolName: string; unitNa
 
   // "GR, Göteborg, Area, School, Unit" format (5+ parts)
   if (parts.length >= 4 && parts[0].toLowerCase() === "gr") {
-    const schoolName = parts[3];
+    const schoolName = cleanSchoolName(parts[3]);
     const unitName = parts.length >= 5 ? parts.slice(4).join(", ") : null;
     return { schoolName, unitName };
   }
 
   // "School, Unit" format (2-3 parts, no GR prefix)
   if (parts.length >= 1) {
-    return { schoolName: parts[0], unitName: parts.length >= 2 ? parts.slice(1).join(", ") : null };
+    return { schoolName: cleanSchoolName(parts[0]), unitName: parts.length >= 2 ? parts.slice(1).join(", ") : null };
   }
 
   return null;

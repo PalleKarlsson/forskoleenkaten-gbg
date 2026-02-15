@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { query, ensureSchema } from "./db.js";
 import pool from "./db.js";
-import { getScale, normalize } from "./normalize.js";
+import { getScale, normalize, cleanSchoolName } from "./normalize.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "../../frontend/public/data");
@@ -127,7 +127,7 @@ async function exportIndex() {
       if (!xlsChildrenMap.has(key)) xlsChildrenMap.set(key, []);
       xlsChildrenMap.get(key)!.push({
         reportId: means?.reportId ?? null,
-        name: s.name,
+        name: cleanSchoolName(s.name),
         avgMean: means?.avgMean ?? null,
         avgNormalized: means?.avgNormalized ?? null,
         respondents: means?.respondents ?? null,
@@ -159,7 +159,7 @@ async function exportIndex() {
           id: s.id,
           areaId: s.area_id,
           year: s.year,
-          name: s.name,
+          name: cleanSchoolName(s.name),
           areaName: s.area_name,
           reportId: means?.reportId ?? null,
           avgMean: means?.avgMean ?? null,
@@ -220,7 +220,7 @@ async function exportAreaSchools() {
 
       schoolData.push({
         id: school.id,
-        name: school.name,
+        name: cleanSchoolName(school.name),
         responseRate: school.response_rate,
         respondents: school.respondents,
         areaMeans: areaMeans.rows.map((m) => ({
@@ -269,7 +269,7 @@ async function exportDetails() {
       reportId: r.id,
       reportType: r.report_type,
       unitName: r.unit_name,
-      schoolName: r.school_name,
+      schoolName: cleanSchoolName(r.school_name),
     });
   }
 
@@ -286,7 +286,7 @@ async function exportDetails() {
         reportId: r.id,
         reportType: r.report_type,
         unitName: r.unit_name || r.school_name,
-        schoolName: r.school_name,
+        schoolName: cleanSchoolName(r.school_name),
       });
       xlsChildToParent.set(r.school_id, { parentSchoolId: r.parent_school_id, year: r.year });
     }
@@ -359,11 +359,11 @@ async function exportDetails() {
     const detail = {
       id: report.id,
       schoolId: report.school_id,
-      schoolName: report.school_name,
+      schoolName: cleanSchoolName(report.school_name),
       areaName: report.area_name,
       year: report.year,
       reportType: report.report_type,
-      unitName: report.unit_name,
+      unitName: report.unit_name ? cleanSchoolName(report.unit_name) : null,
       pdfUrl: report.pdf_url,
       scale: scale.label,
       metadata: meta.rows[0]
