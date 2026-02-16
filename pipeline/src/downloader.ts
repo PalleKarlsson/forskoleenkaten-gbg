@@ -67,10 +67,15 @@ async function main() {
   let sql = `
     SELECT pr.id, pr.pdf_url, pr.year,
            a.name as area_name, a.url_slug as area_slug,
-           s.name as school_name, s.url_slug as school_slug
+           s.clean_name as school_name,
+           COALESCE(
+             (SELECT snv.url_slug FROM school_name_variants snv
+              WHERE snv.school_id = s.id AND snv.area_id = pr.area_id LIMIT 1),
+             s.clean_name
+           ) as school_slug
     FROM pdf_reports pr
     JOIN schools s ON pr.school_id = s.id
-    JOIN areas a ON s.area_id = a.id
+    JOIN areas a ON pr.area_id = a.id
     WHERE pr.downloaded_at IS NULL
   `;
   const params: unknown[] = [];
@@ -80,7 +85,7 @@ async function main() {
     sql += ` AND pr.year = $${params.length}`;
   }
 
-  sql += " ORDER BY pr.year DESC, a.name, s.name";
+  sql += " ORDER BY pr.year DESC, a.name, s.clean_name";
 
   if (limit) {
     params.push(limit);

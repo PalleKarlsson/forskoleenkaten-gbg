@@ -70,6 +70,165 @@ function sheetToArray(ws: ExcelJS.Worksheet): unknown[][] {
   return rows;
 }
 
+/**
+ * Parse a FÖRÄLDRAR (parent survey) sheet from 2007-2009 TABELL XLS files.
+ *
+ * Layout (0-indexed, varies slightly by year):
+ * - Row 0, col 6 (or 7 for 2008): unit name
+ * - Row 1, col 2: respondent count
+ * - Row 2, col 0: district name
+ * - Rows ~9-20: Factor-level summary (NKI indices, 0-100 scale)
+ * - Rows ~25-80: Sub-question detail (1-10 means + response distribution)
+ *
+ * Factor summary rows have C0 like "Fr 13:a-13:c" and C1 in UPPERCASE.
+ * Detail question rows have C0 like "Fr 4:1" with individual question text.
+ */
+function parseForalderSheet(ws: ExcelJS.Worksheet, sheetId: string): XlsUnitData | null {
+  const data = sheetToArray(ws);
+  if (data.length < 10) return null;
+
+  // Unit name: Row 0, col 6 (2007/2009) or col 7 (2008)
+  let unitName = String(data[0]?.[6] ?? "").trim();
+  if (!unitName) unitName = String(data[0]?.[7] ?? "").trim();
+  if (!unitName) return null;
+
+  // Check for "too few respondents" marker
+  const markerRow = data[8] || data[7];
+  if (markerRow && String(markerRow[1] ?? "").includes("INGET RESULTAT")) return null;
+
+  // Row 1, col 2: respondent count
+  const respondents = parseNum(data[1]?.[2]);
+
+  // Row 2: district name
+  const districtName = String(data[2]?.[0] ?? "").trim();
+
+  const level = classifySheet(sheetId);
+
+  const means: XlsUnitData["means"] = [];
+  const responseDistribution: XlsUnitData["responseDistribution"] = [];
+
+  // Find factor summary section: scan for first row where C0 matches "Fr NN:..." pattern
+  let summaryStart = -1;
+  for (let i = 7; i < Math.min(data.length, 15); i++) {
+    const c0 = String(data[i]?.[0] ?? "").trim();
+    if (/^Fr\s+\d+:/i.test(c0)) {
+      summaryStart = i;
+      break;
+    }
+  }
+  if (summaryStart === -1) return null;
+
+  // Parse factor summary rows (NKI-style indices, 0-100 scale)
+  for (let i = summaryStart; i < Math.min(data.length, summaryStart + 20); i++) {
+    const c0 = String(data[i]?.[0] ?? "").trim();
+    const c1 = String(data[i]?.[1] ?? "").replace(/\n/g, " ").trim();
+
+    // End of summary: MEDELVÄRDE row or empty
+    if (/^MEDEL/i.test(c1)) break;
+    if (!c0 && !c1) break;
+
+    // Only include rows with Fr references
+    if (!/^Fr\s+\d+:/i.test(c0)) continue;
+
+    const meanValue = parseNum(data[i]?.[2]);
+    const meanAllSchools = parseNum(data[i]?.[4]);
+
+    // Create NKI-prefixed question text for the factor index
+    // "NFI, DITT BARNS FÖRSKOLA I SIN HELHET" → "NKI NFI"
+    // "TRIVSEL" → "NKI TRIVSEL"
+    // Note: don't use cleanQuestionText here as it lowercases first char
+    const factorName = c1.split(",")[0].replace(/\n/g, " ").trim();
+    const questionText = `NKI ${factorName}`;
+
+    means.push({
+      questionText,
+      meanValue,
+      meanAllSchools,
+      indexValue: null,
+      indexAllSchools: null,
+    });
+  }
+
+  // Find detail section: scan for individual question rows after the summary
+  // Detail rows have C0 matching "Fr X:Y" (single sub-question, not range)
+  let detailStart = -1;
+  for (let i = summaryStart + means.length; i < Math.min(data.length, summaryStart + means.length + 15); i++) {
+    const c0 = String(data[i]?.[0] ?? "").trim();
+    if (/^Fr\s+\d+:[a-zA-Z0-9]$/i.test(c0)) {
+      detailStart = i;
+      break;
+    }
+  }
+
+  // Parse detailed question rows
+  if (detailStart > 0) {
+    for (let i = detailStart; i < data.length; i++) {
+      const c0 = String(data[i]?.[0] ?? "").trim();
+      const c1 = String(data[i]?.[1] ?? "").replace(/\n/g, " ").trim();
+
+      // End of data: "ANTAL SVARANDE" row
+      if (/^ANTAL/i.test(c0) || /^ANTAL/i.test(c1)) break;
+
+      // Skip factor header rows (uppercase name, no Fr label) and empty rows
+      if (!/^Fr\s+\d+:[a-zA-Z0-9]/i.test(c0)) continue;
+
+      // Skip yes/no question Fr 10:6 (not representable as a mean)
+      if (/^Fr\s+10:6$/i.test(c0)) continue;
+
+      let rawText = c1;
+      if (!rawText) continue;
+
+      // Clean FÖRÄLDRAR-specific prefixes before standard cleaning
+      // Remove "Fråga utanför modellen" prefix
+      rawText = rawText.replace(/^Fråga utanför modellen\s*/i, "");
+      // Remove leading "Hur nöjd är du med…" / "Hur nöjd är du med..." wrapper
+      rawText = rawText.replace(/^Hur nöjd är du med[…\u2026.]*\s*/i, "");
+      // Remove leading dash "- "
+      rawText = rawText.replace(/^-\s+/, "");
+
+      const questionText = cleanQuestionText(rawText);
+      const meanValue = parseNum(data[i]?.[2]);
+      const meanAllSchools = parseNum(data[i]?.[4]);
+
+      // Response distribution: col 8 = low(1-4), col 9 = mid(5-7), col 10 = high(8-10), col 12 = no opinion
+      const pctLow = parseNum(data[i]?.[8]);
+      const pctMedium = parseNum(data[i]?.[9]);
+      const pctHigh = parseNum(data[i]?.[10]);
+      const pctNoAnswer = parseNum(data[i]?.[12]);
+
+      means.push({
+        questionText,
+        meanValue,
+        meanAllSchools,
+        indexValue: null,
+        indexAllSchools: null,
+      });
+
+      if (pctLow !== null || pctMedium !== null || pctHigh !== null) {
+        responseDistribution.push({
+          questionText,
+          pctLow,
+          pctMedium,
+          pctHigh,
+          pctNoAnswer,
+        });
+      }
+    }
+  }
+
+  if (means.length === 0) return null;
+
+  return {
+    sheetId,
+    unitName,
+    districtName,
+    respondents,
+    level,
+    means,
+    responseDistribution,
+  };
+}
+
 function parseSheet(ws: ExcelJS.Worksheet, sheetId: string): XlsUnitData | null {
   const data = sheetToArray(ws);
   if (data.length < 10) return null;
@@ -208,7 +367,7 @@ function resolveXlsxPath(filePath: string): string {
  * that have no sub-units (i.e., are themselves the finest granularity).
  * District totals (ID ending "0000") are always excluded.
  */
-export async function parseXlsFile(filePath: string): Promise<XlsUnitData[]> {
+export async function parseXlsFile(filePath: string, format: 'barn' | 'foralder' = 'barn'): Promise<XlsUnitData[]> {
   const resolvedPath = resolveXlsxPath(filePath);
   const wb = new ExcelJS.Workbook();
   await wb.xlsx.readFile(resolvedPath);
@@ -216,6 +375,8 @@ export async function parseXlsFile(filePath: string): Promise<XlsUnitData[]> {
   const sheetNames = wb.worksheets.map((ws) => ws.name);
   const leafIds = findUnitSheetIds(sheetNames);
   const results: XlsUnitData[] = [];
+
+  const parseFn = format === 'foralder' ? parseForalderSheet : parseSheet;
 
   for (const ws of wb.worksheets) {
     const sheetName = ws.name;
@@ -225,7 +386,7 @@ export async function parseXlsFile(filePath: string): Promise<XlsUnitData[]> {
     const numId = sheetName.replace(/^T/, "");
     if (!leafIds.has(numId)) continue;
 
-    const parsed = parseSheet(ws, sheetName);
+    const parsed = parseFn(ws, sheetName);
     if (!parsed) continue;
 
     results.push(parsed);

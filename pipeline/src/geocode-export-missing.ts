@@ -21,13 +21,12 @@ async function main() {
   await ensureSchema();
 
   const result = await query(
-    `SELECT DISTINCT ON (s.name)
-            s.name,
-            a.name as area_name
+    `SELECT s.clean_name,
+            (SELECT a.name FROM pdf_reports pr JOIN areas a ON pr.area_id = a.id
+             WHERE pr.school_id = s.id ORDER BY a.year DESC LIMIT 1) as area_name
      FROM schools s
-     JOIN areas a ON s.area_id = a.id
      WHERE s.lat IS NULL
-     ORDER BY s.name, a.year DESC`,
+     ORDER BY s.clean_name`,
   );
 
   const rows = result.rows;
@@ -35,7 +34,7 @@ async function main() {
 
   const lines = ["name\tarea_name\taddress"];
   for (const row of rows) {
-    lines.push(`${row.name}\t${row.area_name}\t`);
+    lines.push(`${row.clean_name}\t${row.area_name}\t`);
   }
 
   writeFileSync(OUT_PATH, lines.join("\n") + "\n", "utf-8");

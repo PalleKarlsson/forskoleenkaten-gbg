@@ -75,7 +75,7 @@ async function main() {
 
     if (coords) {
       const result = await query(
-        `UPDATE schools SET lat = $1, lng = $2 WHERE name = $3 AND lat IS NULL`,
+        `UPDATE schools SET lat = $1, lng = $2 WHERE clean_name = $3 AND lat IS NULL`,
         [coords.lat, coords.lng, name],
       );
       console.log(`${name} -> ${coords.lat}, ${coords.lng} (${result.rowCount} rows)`);

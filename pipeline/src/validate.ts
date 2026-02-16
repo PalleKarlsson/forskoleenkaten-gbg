@@ -31,10 +31,10 @@ interface ValidationResult {
 async function validateReport(reportId: number): Promise<ValidationResult> {
   // Get report info
   const reportRes = await query(
-    `SELECT pr.id, pr.local_path, pr.year, s.name as school_name, a.name as area_name
+    `SELECT pr.id, pr.local_path, pr.year, s.clean_name as school_name, a.name as area_name
      FROM pdf_reports pr
      JOIN schools s ON pr.school_id = s.id
-     JOIN areas a ON s.area_id = a.id
+     JOIN areas a ON pr.area_id = a.id
      WHERE pr.id = $1`,
     [reportId],
   );
@@ -138,9 +138,7 @@ async function main() {
   for (const year of years) {
     const samples = await query(
       `SELECT pr.id FROM pdf_reports pr
-       JOIN schools s ON pr.school_id = s.id
-       JOIN areas a ON s.area_id = a.id
-       WHERE a.year = $1
+       WHERE pr.year = $1
          AND pr.parsed_at IS NOT NULL
          AND pr.local_path IS NOT NULL
          AND EXISTS (SELECT 1 FROM question_means qm WHERE qm.pdf_report_id = pr.id)

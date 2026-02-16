@@ -15,9 +15,48 @@ CREATE TABLE IF NOT EXISTS areas (
 
 CREATE TABLE IF NOT EXISTS schools (
   id          SERIAL PRIMARY KEY,
-  area_id     INTEGER NOT NULL REFERENCES areas(id),
-  name        TEXT NOT NULL,
+  clean_name  TEXT NOT NULL,
+  address     TEXT,
+  lat         DOUBLE PRECISION,
+  lng         DOUBLE PRECISION
+);
+
+-- Merge case-only duplicate schools before creating the case-insensitive index.
+-- Idempotent: safe to re-run even if no duplicates exist.
+DO $$
+DECLARE
+  r RECORD;
+  keep_id INTEGER;
+BEGIN
+  FOR r IN
+    SELECT LOWER(COALESCE(address, clean_name)) AS lkey,
+           array_agg(id ORDER BY id) AS ids
+    FROM schools
+    GROUP BY LOWER(COALESCE(address, clean_name))
+    HAVING COUNT(*) > 1
+  LOOP
+    keep_id := r.ids[1];
+    FOR i IN 2..array_length(r.ids, 1) LOOP
+      -- Move references from duplicate to canonical school
+      UPDATE school_name_variants SET school_id = keep_id WHERE school_id = r.ids[i];
+      UPDATE pdf_reports SET school_id = keep_id WHERE school_id = r.ids[i];
+      UPDATE pdf_reports SET parent_school_id = keep_id WHERE parent_school_id = r.ids[i];
+      DELETE FROM schools WHERE id = r.ids[i];
+    END LOOP;
+  END LOOP;
+END $$;
+
+-- Drop old case-sensitive index if it exists, then create case-insensitive one
+DROP INDEX IF EXISTS schools_dedup_key;
+CREATE UNIQUE INDEX IF NOT EXISTS schools_dedup_key
+  ON schools (LOWER(COALESCE(address, clean_name)));
+
+CREATE TABLE IF NOT EXISTS school_name_variants (
+  id          SERIAL PRIMARY KEY,
+  school_id   INTEGER NOT NULL REFERENCES schools(id) ON DELETE CASCADE,
+  original_name TEXT NOT NULL,
   url_slug    TEXT NOT NULL,
+  area_id     INTEGER NOT NULL REFERENCES areas(id),
   UNIQUE (area_id, url_slug)
 );
 
@@ -31,8 +70,15 @@ CREATE TABLE IF NOT EXISTS pdf_reports (
   local_path    TEXT,
   downloaded_at TIMESTAMPTZ,
   parsed_at     TIMESTAMPTZ,
-  parse_error   TEXT
+  parse_error   TEXT,
+  area_id       INTEGER REFERENCES areas(id),
+  parent_school_id INTEGER REFERENCES schools(id)
 );
+
+-- For existing databases: add new columns to pdf_reports
+ALTER TABLE pdf_reports ADD COLUMN IF NOT EXISTS area_id INTEGER REFERENCES areas(id);
+ALTER TABLE pdf_reports ADD COLUMN IF NOT EXISTS parent_school_id INTEGER REFERENCES schools(id);
+ALTER TABLE pdf_reports ADD COLUMN IF NOT EXISTS report_category TEXT;
 
 CREATE TABLE IF NOT EXISTS report_metadata (
   pdf_report_id           INTEGER PRIMARY KEY REFERENCES pdf_reports(id),
@@ -108,7 +154,3 @@ CREATE TABLE IF NOT EXISTS important_questions (
   pct             REAL,
   UNIQUE (pdf_report_id, question_id)
 );
-
-ALTER TABLE schools ADD COLUMN IF NOT EXISTS lat DOUBLE PRECISION;
-ALTER TABLE schools ADD COLUMN IF NOT EXISTS lng DOUBLE PRECISION;
-ALTER TABLE schools ADD COLUMN IF NOT EXISTS parent_school_id INTEGER REFERENCES schools(id);

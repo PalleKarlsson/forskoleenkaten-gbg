@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { query, ensureSchema } from "./db.js";
 import pool from "./db.js";
-import { getScale, normalize, cleanSchoolName } from "./normalize.js";
+import { getScale, normalize } from "./normalize.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "../../frontend/public/data");
@@ -38,13 +38,19 @@ async function exportIndex() {
     `SELECT a.id, a.year, a.name, a.url_slug FROM areas a ORDER BY a.year DESC, a.name`,
   );
 
+  // Schools: one entry per (school, year) via pdf_reports
   const schools = await query(
-    `SELECT s.id, s.area_id, s.name, s.url_slug,
-            a.year, a.name as area_name,
-            s.lat, s.lng, s.parent_school_id
-     FROM schools s
-     JOIN areas a ON s.area_id = a.id
-     ORDER BY a.year DESC, a.name, s.name`,
+    `SELECT * FROM (
+       SELECT DISTINCT ON (s.id, a.year)
+              s.id, s.clean_name, s.lat, s.lng,
+              pr.area_id, a.year, a.name as area_name
+       FROM schools s
+       JOIN pdf_reports pr ON pr.school_id = s.id
+       JOIN areas a ON pr.area_id = a.id
+       WHERE pr.area_id IS NOT NULL
+       ORDER BY s.id, a.year DESC, a.name
+     ) sub
+     ORDER BY year DESC, area_name, clean_name`,
   );
 
   // Get school-level mean averages and report IDs for quick overview
@@ -52,7 +58,7 @@ async function exportIndex() {
   // Exclude NKI indices (0-100 scale) from average to avoid mixing scales
   const schoolMeans = await query(
     `SELECT DISTINCT ON (pr.school_id, pr.year)
-            pr.school_id, pr.id as report_id, pr.year,
+            pr.school_id, pr.id as report_id, pr.year, pr.report_category,
             (SELECT AVG(qm2.mean_school) FROM question_means qm2
              JOIN questions q2 ON q2.id = qm2.question_id
              WHERE qm2.pdf_report_id = pr.id AND q2.text NOT LIKE 'NKI %') as avg_mean,
@@ -66,21 +72,23 @@ async function exportIndex() {
        pr.id`,
   );
 
-  const meansMap = new Map<string, { reportId: number; avgMean: number; avgNormalized: number; respondents: number | null; responseRate: number | null }>();
+  const meansMap = new Map<string, { reportId: number; avgMean: number; avgNormalized: number; respondents: number | null; responseRate: number | null; reportCategory: string | null }>();
   for (const row of schoolMeans.rows) {
     const avgMean = parseFloat(parseFloat(row.avg_mean).toFixed(2));
+    const category = row.report_category as 'barn' | 'foralder' | undefined;
     meansMap.set(`${row.school_id}-${row.year}`, {
       reportId: row.report_id,
       avgMean,
-      avgNormalized: normalize(avgMean, row.year) ?? 0,
+      avgNormalized: normalize(avgMean, row.year, undefined, category) ?? 0,
       respondents: row.respondents,
       responseRate: row.response_rate,
+      reportCategory: row.report_category,
     });
   }
 
   // Crawler units: report_type='unit' reports that share school_id with parent
   const crawlerUnits = await query(
-    `SELECT pr.id as report_id, pr.school_id, pr.year, pr.unit_name,
+    `SELECT pr.id as report_id, pr.school_id, pr.year, pr.unit_name, pr.report_category,
             (SELECT AVG(qm2.mean_school) FROM question_means qm2
              JOIN questions q2 ON q2.id = qm2.question_id
              WHERE qm2.pdf_report_id = pr.id AND q2.text NOT LIKE 'NKI %') as avg_mean,
@@ -88,6 +96,7 @@ async function exportIndex() {
      FROM pdf_reports pr
      LEFT JOIN report_metadata rm ON rm.pdf_report_id = pr.id
      WHERE pr.report_type = 'unit'
+       AND pr.parent_school_id IS NULL
        AND pr.parsed_at IS NOT NULL
        AND EXISTS (SELECT 1 FROM question_means qm WHERE qm.pdf_report_id = pr.id)
      ORDER BY pr.school_id, pr.year, pr.unit_name`,
@@ -102,38 +111,45 @@ async function exportIndex() {
     const key = `${row.school_id}-${row.year}`;
     if (!crawlerUnitsMap.has(key)) crawlerUnitsMap.set(key, []);
     const avgMean = row.avg_mean ? parseFloat(parseFloat(row.avg_mean).toFixed(2)) : null;
+    const category = row.report_category as 'barn' | 'foralder' | undefined;
     crawlerUnitsMap.get(key)!.push({
       reportId: row.report_id,
       name: row.unit_name,
       avgMean,
-      avgNormalized: avgMean !== null ? normalize(avgMean, row.year) : null,
+      avgNormalized: avgMean !== null ? normalize(avgMean, row.year, undefined, category) : null,
       respondents: row.respondents,
       responseRate: row.response_rate,
     });
   }
 
-  // XLS children: schools with parent_school_id set
-  // Build set of child school IDs and map from parent to children
-  const childSchoolIds = new Set<number>();
+  // XLS children: reports with parent_school_id set
+  const xlsChildReports = await query(
+    `SELECT DISTINCT pr.school_id, pr.parent_school_id, a.year, s.clean_name
+     FROM pdf_reports pr
+     JOIN schools s ON pr.school_id = s.id
+     JOIN areas a ON pr.area_id = a.id
+     WHERE pr.parent_school_id IS NOT NULL`,
+  );
+
+  const childEntries = new Set<string>();
   const xlsChildrenMap = new Map<string, Array<{
     reportId: number | null; name: string; avgMean: number | null;
     avgNormalized: number | null; respondents: number | null; responseRate: number | null;
   }>>();
-  for (const s of schools.rows) {
-    if (s.parent_school_id) {
-      childSchoolIds.add(s.id);
-      const means = meansMap.get(`${s.id}-${s.year}`);
-      const key = `${s.parent_school_id}-${s.year}`;
-      if (!xlsChildrenMap.has(key)) xlsChildrenMap.set(key, []);
-      xlsChildrenMap.get(key)!.push({
-        reportId: means?.reportId ?? null,
-        name: cleanSchoolName(s.name),
-        avgMean: means?.avgMean ?? null,
-        avgNormalized: means?.avgNormalized ?? null,
-        respondents: means?.respondents ?? null,
-        responseRate: means?.responseRate ?? null,
-      });
-    }
+
+  for (const r of xlsChildReports.rows) {
+    childEntries.add(`${r.school_id}-${r.year}`);
+    const key = `${r.parent_school_id}-${r.year}`;
+    if (!xlsChildrenMap.has(key)) xlsChildrenMap.set(key, []);
+    const means = meansMap.get(`${r.school_id}-${r.year}`);
+    xlsChildrenMap.get(key)!.push({
+      reportId: means?.reportId ?? null,
+      name: r.clean_name,
+      avgMean: means?.avgMean ?? null,
+      avgNormalized: means?.avgNormalized ?? null,
+      respondents: means?.respondents ?? null,
+      responseRate: means?.responseRate ?? null,
+    });
   }
 
   const index = {
@@ -145,10 +161,11 @@ async function exportIndex() {
       slug: a.url_slug,
     })),
     schools: schools.rows
-      .filter((s) => !childSchoolIds.has(s.id))
+      .filter((s) => !childEntries.has(`${s.id}-${s.year}`))
       .map((s) => {
         const means = meansMap.get(`${s.id}-${s.year}`);
-        const scale = getScale(s.year);
+        const category = means?.reportCategory as 'barn' | 'foralder' | undefined;
+        const scale = getScale(s.year, category);
 
         // Merge crawler units + XLS children into a single units array
         const crawlerList = crawlerUnitsMap.get(`${s.id}-${s.year}`) || [];
@@ -159,7 +176,7 @@ async function exportIndex() {
           id: s.id,
           areaId: s.area_id,
           year: s.year,
-          name: cleanSchoolName(s.name),
+          name: s.clean_name,
           areaName: s.area_name,
           reportId: means?.reportId ?? null,
           avgMean: means?.avgMean ?? null,
@@ -190,14 +207,14 @@ async function exportAreaSchools() {
   let fileCount = 0;
   for (const area of areas.rows) {
     const schools = await query(
-      `SELECT DISTINCT ON (s.id) s.id, s.name,
+      `SELECT DISTINCT ON (s.id) s.id, s.clean_name,
               pr.id as report_id,
               rm.response_rate, rm.respondents
        FROM schools s
        JOIN pdf_reports pr ON pr.school_id = s.id
        LEFT JOIN report_metadata rm ON rm.pdf_report_id = pr.id
-       WHERE s.area_id = $1
-         AND s.parent_school_id IS NULL
+       WHERE pr.area_id = $1
+         AND pr.parent_school_id IS NULL
          AND pr.parsed_at IS NOT NULL
          AND EXISTS (SELECT 1 FROM question_means qm WHERE qm.pdf_report_id = pr.id)
        ORDER BY s.id, CASE pr.report_type WHEN 'school' THEN 0 ELSE 1 END, pr.id`,
@@ -220,7 +237,7 @@ async function exportAreaSchools() {
 
       schoolData.push({
         id: school.id,
-        name: cleanSchoolName(school.name),
+        name: school.clean_name,
         responseRate: school.response_rate,
         respondents: school.respondents,
         areaMeans: areaMeans.rows.map((m) => ({
@@ -246,19 +263,19 @@ async function exportAreaSchools() {
 async function exportDetails() {
   const reports = await query(
     `SELECT pr.id, pr.school_id, pr.year, pr.report_type, pr.unit_name,
-            pr.pdf_url,
-            s.name as school_name, s.parent_school_id,
+            pr.pdf_url, pr.parent_school_id, pr.report_category,
+            s.clean_name as school_name,
             a.name as area_name
      FROM pdf_reports pr
      JOIN schools s ON pr.school_id = s.id
-     JOIN areas a ON s.area_id = a.id
+     JOIN areas a ON pr.area_id = a.id
      WHERE pr.parsed_at IS NOT NULL
      ORDER BY pr.id`,
   );
 
   // Build related reports lookup:
   // For crawler units: siblings share the same school_id
-  // For XLS units: linked via parent_school_id
+  // For XLS units: linked via parent_school_id on pdf_reports
   const reportsBySchoolId = new Map<string, Array<{
     reportId: number; reportType: string; unitName: string | null; schoolName: string;
   }>>();
@@ -269,15 +286,14 @@ async function exportDetails() {
       reportId: r.id,
       reportType: r.report_type,
       unitName: r.unit_name,
-      schoolName: cleanSchoolName(r.school_name),
+      schoolName: r.school_name,
     });
   }
 
-  // Map parent_school_id → child schools for XLS units
+  // Map parent_school_id → child reports for XLS units
   const xlsParentToChildren = new Map<string, Array<{
     reportId: number; reportType: string; unitName: string | null; schoolName: string;
   }>>();
-  const xlsChildToParent = new Map<number, { parentSchoolId: number; year: number }>();
   for (const r of reports.rows) {
     if (r.parent_school_id) {
       const key = `${r.parent_school_id}-${r.year}`;
@@ -286,9 +302,8 @@ async function exportDetails() {
         reportId: r.id,
         reportType: r.report_type,
         unitName: r.unit_name || r.school_name,
-        schoolName: cleanSchoolName(r.school_name),
+        schoolName: r.school_name,
       });
-      xlsChildToParent.set(r.school_id, { parentSchoolId: r.parent_school_id, year: r.year });
     }
   }
 
@@ -355,15 +370,16 @@ async function exportDetails() {
       [report.id],
     );
 
-    const scale = getScale(report.year);
+    const detailCategory = report.report_category as 'barn' | 'foralder' | undefined;
+    const scale = getScale(report.year, detailCategory);
     const detail = {
       id: report.id,
       schoolId: report.school_id,
-      schoolName: cleanSchoolName(report.school_name),
+      schoolName: report.school_name,
       areaName: report.area_name,
       year: report.year,
       reportType: report.report_type,
-      unitName: report.unit_name ? cleanSchoolName(report.unit_name) : null,
+      unitName: report.unit_name,
       pdfUrl: report.pdf_url,
       scale: scale.label,
       metadata: meta.rows[0]
@@ -383,7 +399,7 @@ async function exportDetails() {
         goteborg: m.mean_goteborg,
         district: m.mean_district,
         school: m.mean_school,
-        normalized: normalize(m.mean_school, report.year, m.question),
+        normalized: normalize(m.mean_school, report.year, m.question, detailCategory),
         history: m.historical_means,
       })),
       responses: responses.rows.map((r) => ({
@@ -422,14 +438,13 @@ async function exportDetails() {
     // If this is a parent school, include XLS children
     const xlsChildren = xlsParentToChildren.get(`${report.school_id}-${report.year}`) || [];
     for (const child of xlsChildren) related.push(child);
-    // If this is an XLS child, include parent and other siblings
-    const parentInfo = xlsChildToParent.get(report.school_id);
-    if (parentInfo) {
-      const parentReports = reportsBySchoolId.get(`${parentInfo.parentSchoolId}-${parentInfo.year}`) || [];
+    // If this report is an XLS child, include parent and other siblings
+    if (report.parent_school_id) {
+      const parentReports = reportsBySchoolId.get(`${report.parent_school_id}-${report.year}`) || [];
       for (const pr of parentReports) {
         if (!related.some((r) => r.reportId === pr.reportId)) related.push(pr);
       }
-      const otherChildren = xlsParentToChildren.get(`${parentInfo.parentSchoolId}-${parentInfo.year}`) || [];
+      const otherChildren = xlsParentToChildren.get(`${report.parent_school_id}-${report.year}`) || [];
       for (const oc of otherChildren) {
         if (oc.reportId !== report.id && !related.some((r) => r.reportId === oc.reportId)) related.push(oc);
       }

@@ -7,7 +7,8 @@ import "dotenv/config";
 import * as cheerio from "cheerio";
 import { query, ensureSchema } from "./db.js";
 import pool from "./db.js";
-import { cleanSchoolName } from "./normalize.js";
+import { computeCleanName } from "./normalize.js";
+import { findOrCreateSchool } from "./school-helpers.js";
 
 const BASE_URL = "https://enkater.goteborg.se";
 const DELAY_MS = 500;
@@ -125,6 +126,32 @@ function isContentLink(link: { name: string; href: string }): boolean {
   if (!link.href.includes("ListEnkater.aspx")) return false;
   if (link.name.includes(">>") || link.name.includes("›")) return false;
   if (link.href.includes("Default.aspx")) return false;
+  return true;
+}
+
+/**
+ * Filter out entries that are not physical schools.
+ * These are area-wide summaries, category entries, or district labels
+ * that the site's hierarchy lists alongside actual schools.
+ */
+function isPhysicalSchool(name: string): boolean {
+  const n = name.trim().toLowerCase();
+  // Area-wide summary entries: "Fristående förskolor (total)", "Pedagogisk omsorg (total)"
+  if (n.includes("(total)")) return false;
+  // Pedagogisk omsorg = family daycare category, not a physical school
+  if (n === "pedagogisk omsorg" || n.startsWith("pedagogisk omsorg ")) return false;
+  // Family daycare category (not a physical school)
+  if (n.startsWith("familjedaghem")) return false;
+  // Area-wide overviews: "Övergripande fristående"
+  if (n.startsWith("övergripande")) return false;
+  // District/area labels: "Sydväst område 2"
+  if (/\bområde\s+\d/.test(n)) return false;
+  // CMS artifacts
+  if (/^(new folder|test(pdf)?)$/i.test(n)) return false;
+  // XLS file names crawled as school entries (junk)
+  if (/\.xls$/i.test(n)) return false;
+  // Too short after normalization (likely junk)
+  if (n.length < 3) return false;
   return true;
 }
 
@@ -248,7 +275,8 @@ async function discoverPdfs(
  * Parse school and unit name from flat-hierarchy PDF link text.
  * Link text patterns:
  *   2023: "GR, Göteborg, Centrum 1, Borgaregatan 5 förskola, Grodan"
- *   2020: "Borgaregatan 5 förskola, Grodan"
+ *   2021: "Björnidet, Fräntorpsgatan 57, Östra 1, Göteborg, GR.pdf"
+ *   2020: "GR-Göteborg-Centrum 1-Albotorget 5-Junibacken_2020.pdf"
  * Returns { schoolName, unitName } or null if it's a summary PDF.
  */
 function parseSchoolFromLinkText(linkText: string): { schoolName: string; unitName: string | null } | null {
@@ -258,7 +286,7 @@ function parseSchoolFromLinkText(linkText: string): { schoolName: string; unitNa
   if (dashMatch) {
     const remainder = dashMatch[1]; // "Albotorget 5-Junibacken" or "Albotorget 5"
     const dashParts = remainder.split("-");
-    const schoolName = cleanSchoolName(dashParts[0]);
+    const schoolName = dashParts[0].trim();
     const unitName = dashParts.length >= 2 ? dashParts.slice(1).join("-").trim() : null;
     return { schoolName, unitName };
   }
@@ -267,22 +295,34 @@ function parseSchoolFromLinkText(linkText: string): { schoolName: string; unitNa
   // Commas as separators
   const parts = linkText.split(",").map((s) => s.trim());
 
-  // Skip pure summary PDFs (e.g., "Göteborg, GR" or "Göteborgsregionen 2020")
-  if (parts.length <= 2) {
+  // Skip pure summary PDFs (e.g., "Göteborg, GR" or "GR, Göteborg, Fristående Angered")
+  if (parts.length <= 3) {
     const combined = parts.join(" ").toLowerCase();
     if (combined.includes("göteborg") || /\bgr\b/.test(combined) || combined.includes("göteborgsregionen")) return null;
   }
 
-  // "GR, Göteborg, Area, School, Unit" format (5+ parts)
+  // "GR, Göteborg, Area, School, Unit" format (2022-2023: GR at start)
   if (parts.length >= 4 && parts[0].toLowerCase() === "gr") {
-    const schoolName = cleanSchoolName(parts[3]);
+    const schoolName = parts[3].trim();
     const unitName = parts.length >= 5 ? parts.slice(4).join(", ") : null;
     return { schoolName, unitName };
   }
 
+  // "Unit, School, Area, Göteborg, GR.pdf" format (2021: GR at end)
+  // or "School, Area, Göteborg, GR.pdf" (school-only, no unit prefix)
+  const lastPart = parts[parts.length - 1].replace(/\.pdf$/i, "").trim().toLowerCase();
+  if (lastPart === "gr" && parts.length >= 4) {
+    if (parts.length === 4) {
+      // "School, Area, Göteborg, GR.pdf"
+      return { schoolName: parts[0].trim(), unitName: null };
+    }
+    // "Unit, School, Area, Göteborg, GR.pdf"
+    return { schoolName: parts[1].trim(), unitName: parts[0].trim() };
+  }
+
   // "School, Unit" format (2-3 parts, no GR prefix)
   if (parts.length >= 1) {
-    return { schoolName: cleanSchoolName(parts[0]), unitName: parts.length >= 2 ? parts.slice(1).join(", ") : null };
+    return { schoolName: parts[0].trim(), unitName: parts.length >= 2 ? parts.slice(1).join(", ") : null };
   }
 
   return null;
@@ -374,6 +414,9 @@ async function crawlYear(year: number, force: boolean) {
   console.log(`  Found ${areas.length} areas`);
 
   for (const area of areas) {
+    // Derive report category from catPath (BARN__FÖRSKOLA vs FÖRÄLDRAR__FÖRSKOLA)
+    const reportCategory = /f.r.ldrar/i.test(decodeURIComponent(area.catPath)) ? 'foralder' : 'barn';
+
     // Upsert area
     const areaResult = await query(
       `INSERT INTO areas (year, name, url_slug)
@@ -415,28 +458,23 @@ async function crawlYear(year: number, force: boolean) {
 
     if (!useFlat && schoolLinks.length > 0) {
       // Standard hierarchy: area → school folders → PDFs
-      console.log(`    ${area.name}: ${schoolLinks.length} schools`);
+      const physicalSchools = schoolLinks.filter((s) => isPhysicalSchool(s.name));
+      const skipped = schoolLinks.length - physicalSchools.length;
+      console.log(`    ${area.name}: ${physicalSchools.length} schools${skipped ? ` (${skipped} non-school entries skipped)` : ""}`);
 
-      for (const school of schoolLinks) {
+      for (const school of physicalSchools) {
         try {
-          const schoolResult = await query(
-            `INSERT INTO schools (area_id, name, url_slug)
-             VALUES ($1, $2, $3)
-             ON CONFLICT (area_id, url_slug) DO UPDATE SET name = $2
-             RETURNING id`,
-            [areaId, school.name, school.slug],
-          );
-          const schoolId = schoolResult.rows[0].id;
+          const schoolId = await findOrCreateSchool(school.name, school.slug, areaId);
 
           await sleep(DELAY_MS);
           const pdfs = await discoverPdfs(area.catPath, area.slug, school.slug);
 
           for (const pdf of pdfs) {
             await query(
-              `INSERT INTO pdf_reports (school_id, year, report_type, unit_name, pdf_url)
-               VALUES ($1, $2, $3, $4, $5)
+              `INSERT INTO pdf_reports (school_id, year, report_type, unit_name, pdf_url, area_id, report_category)
+               VALUES ($1, $2, $3, $4, $5, $6, $7)
                ON CONFLICT (pdf_url) DO NOTHING`,
-              [schoolId, year, pdf.reportType, pdf.unitName, pdf.url],
+              [schoolId, year, pdf.reportType, pdf.unitName, pdf.url, areaId, reportCategory],
             );
           }
         } catch (err) {
@@ -470,21 +508,16 @@ async function crawlYear(year: number, force: boolean) {
 
         let pdfCount = 0;
         for (const [schoolName, pdfs] of schoolMap) {
-          const schoolResult = await query(
-            `INSERT INTO schools (area_id, name, url_slug)
-             VALUES ($1, $2, $3)
-             ON CONFLICT (area_id, url_slug) DO UPDATE SET name = $2
-             RETURNING id`,
-            [areaId, schoolName, schoolName],
-          );
-          const schoolId = schoolResult.rows[0].id;
+          if (!isPhysicalSchool(schoolName)) continue;
+          const cleanName = computeCleanName(schoolName);
+          const schoolId = await findOrCreateSchool(schoolName, cleanName, areaId);
 
           for (const pdf of pdfs) {
             await query(
-              `INSERT INTO pdf_reports (school_id, year, report_type, unit_name, pdf_url)
-               VALUES ($1, $2, $3, $4, $5)
+              `INSERT INTO pdf_reports (school_id, year, report_type, unit_name, pdf_url, area_id, report_category)
+               VALUES ($1, $2, $3, $4, $5, $6, $7)
                ON CONFLICT (pdf_url) DO NOTHING`,
-              [schoolId, year, pdf.reportType, pdf.unitName, pdf.url],
+              [schoolId, year, pdf.reportType, pdf.unitName, pdf.url, areaId, reportCategory],
             );
             pdfCount++;
           }

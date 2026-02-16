@@ -15,6 +15,7 @@
     "geocode:missing": "tsx src/geocode-export-missing.ts",
     "geocode:validate": "tsx src/validate-geocodes.ts",
     "geocode:import": "tsx src/geocode-import.ts",
+    "geocode:osm": "tsx src/geocode-osm.ts",
     "schema": "tsx src/schema-runner.ts",
     "test": "node --import tsx --test tests/parse.test.ts tests/normalize.test.ts",
     "typecheck": "tsc -p tsconfig.check.json",

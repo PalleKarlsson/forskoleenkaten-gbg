@@ -168,8 +168,8 @@ async function main() {
   if (refineMode) {
     console.log("=== Refine mode: updating all matched schools with SCB coordinates ===\n");
 
-    const all = await query<{ name: string; lat: number | null; lng: number | null }>(
-      `SELECT DISTINCT ON (name) name, lat, lng FROM schools ORDER BY name, id`,
+    const all = await query<{ id: number; clean_name: string; lat: number | null; lng: number | null }>(
+      `SELECT id, clean_name, lat, lng FROM schools ORDER BY clean_name`,
     );
 
     let refined = 0;
@@ -177,7 +177,7 @@ async function main() {
     let noMatch = 0;
 
     for (const row of all.rows) {
-      const result = findScbMatch(row.name, scbByName, scbByAddress);
+      const result = findScbMatch(row.clean_name, scbByName, scbByAddress);
       if (!result) { noMatch++; continue; }
 
       const { match, matchType } = result;
@@ -188,12 +188,12 @@ async function main() {
         continue;
       }
 
-      const updated = await query(
-        `UPDATE schools SET lat = $1, lng = $2 WHERE name = $3`,
-        [match.lat, match.lng, row.name],
+      await query(
+        `UPDATE schools SET lat = $1, lng = $2 WHERE id = $3`,
+        [match.lat, match.lng, row.id],
       );
       const oldCoords = row.lat !== null ? `(${row.lat}, ${row.lng})` : "(none)";
-      console.log(`[${matchType}] ${row.name}: ${oldCoords} -> (${match.lat}, ${match.lng}) via ${match.firma || match.foretag} (${match.address}) (${updated.rowCount} rows)`);
+      console.log(`[${matchType}] ${row.clean_name}: ${oldCoords} -> (${match.lat}, ${match.lng}) via ${match.firma || match.foretag} (${match.address})`);
       refined++;
     }
 
@@ -201,11 +201,10 @@ async function main() {
   } else {
     // Original mode: only fill in missing coordinates
     const missing = await query(
-      `SELECT DISTINCT ON (s.name) s.name, a.name as area_name
+      `SELECT s.id, s.clean_name
        FROM schools s
-       JOIN areas a ON s.area_id = a.id
        WHERE s.lat IS NULL
-       ORDER BY s.name, a.year DESC`,
+       ORDER BY s.clean_name`,
     );
 
     console.log(`${missing.rows.length} unique school names without coordinates.\n`);
@@ -214,15 +213,15 @@ async function main() {
     let unmatched = 0;
 
     for (const row of missing.rows) {
-      const result = findScbMatch(row.name, scbByName, scbByAddress);
+      const result = findScbMatch(row.clean_name, scbByName, scbByAddress);
 
       if (result) {
         const { match, matchType } = result;
-        const updated = await query(
-          `UPDATE schools SET lat = $1, lng = $2 WHERE name = $3 AND lat IS NULL`,
-          [match.lat, match.lng, row.name],
+        await query(
+          `UPDATE schools SET lat = $1, lng = $2 WHERE id = $3`,
+          [match.lat, match.lng, row.id],
         );
-        console.log(`[${matchType}] ${row.name} -> ${match.firma || match.foretag} (${match.address}) = ${match.lat}, ${match.lng} (${updated.rowCount} rows)`);
+        console.log(`[${matchType}] ${row.clean_name} -> ${match.firma || match.foretag} (${match.address}) = ${match.lat}, ${match.lng}`);
         matched++;
       } else {
         unmatched++;

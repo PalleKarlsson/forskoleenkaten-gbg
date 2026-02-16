@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geocode Admin</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; }
+    #map { width: 100%; height: 100vh; }
+
+    #controls {
+      position: absolute; top: 10px; right: 10px; z-index: 1000;
+      display: flex; flex-direction: column; gap: 8px; align-items: flex-end;
+    }
+
+    #search {
+      padding: 8px 12px; width: 260px; border: 2px solid #ccc; border-radius: 6px;
+      font-size: 14px; background: white; box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    #search:focus { outline: none; border-color: #2563eb; }
+
+    #save-btn {
+      display: none; padding: 10px 20px; background: #2563eb; color: white;
+      border: none; border-radius: 6px; font-size: 14px; font-weight: 600;
+      cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    #save-btn:hover { background: #1d4ed8; }
+    #save-btn:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    #status {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      z-index: 1000; padding: 8px 16px; background: rgba(0,0,0,0.75); color: white;
+      border-radius: 6px; font-size: 13px; display: none;
+    }
+
+    .school-pin {
+      width: 14px; height: 14px;
+      background: #2563eb;
+      border: 2px solid white;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      transition: background 0.15s;
+    }
+    .school-pin.changed {
+      background: #f97316;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="controls">
+    <input type="text" id="search" placeholder="Search schools..." />
+    <button id="save-btn"></button>
+  </div>
+  <div id="status"></div>
+
+  <script>
+    const map = L.map('map').setView([57.7089, 11.9746], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    const pinIcon = L.divIcon({
+      className: 'school-pin',
+      iconSize: [14, 14],
+      iconAnchor: [7, 7],
+      popupAnchor: [0, -10],
+    });
+
+    const pendingChanges = new Map();
+    const markers = [];
+    const searchInput = document.getElementById('search');
+    const saveBtn = document.getElementById('save-btn');
+    const statusEl = document.getElementById('status');
+
+    function showStatus(msg, duration = 3000) {
+      statusEl.textContent = msg;
+      statusEl.style.display = 'block';
+      if (duration > 0) setTimeout(() => { statusEl.style.display = 'none'; }, duration);
+    }
+
+    function updateSaveButton() {
+      const count = pendingChanges.size;
+      if (count > 0) {
+        saveBtn.textContent = `Save ${count} change${count > 1 ? 's' : ''}`;
+        saveBtn.style.display = 'block';
+      } else {
+        saveBtn.style.display = 'none';
+      }
+    }
+
+    function popupContent(name, lat, lng, rowCount) {
+      return `<strong>${name}</strong><br>` +
+        `Lat: ${lat.toFixed(6)}<br>Lng: ${lng.toFixed(6)}<br>` +
+        `<small>${rowCount} row${rowCount > 1 ? 's' : ''} in DB</small>`;
+    }
+
+    async function loadSchools() {
+      showStatus('Loading schools...', 0);
+      try {
+        const res = await fetch('/api/schools');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const schools = await res.json();
+
+        for (const school of schools) {
+          const marker = L.marker([school.lat, school.lng], {
+            draggable: true,
+            icon: pinIcon,
+          }).addTo(map);
+
+          marker._schoolName = school.name;
+          marker._schoolRowCount = school.row_count;
+          marker._originalLat = school.lat;
+          marker._originalLng = school.lng;
+
+          marker.bindPopup(popupContent(school.name, school.lat, school.lng, school.row_count));
+
+          marker.on('dragend', () => {
+            const pos = marker.getLatLng();
+            // Check if dragged back to original position
+            if (Math.abs(pos.lat - marker._originalLat) < 1e-7 &&
+                Math.abs(pos.lng - marker._originalLng) < 1e-7) {
+              pendingChanges.delete(school.name);
+              marker._icon.classList.remove('changed');
+            } else {
+              pendingChanges.set(school.name, { lat: pos.lat, lng: pos.lng });
+              marker._icon.classList.add('changed');
+            }
+            marker.setPopupContent(popupContent(school.name, pos.lat, pos.lng, school.row_count));
+            updateSaveButton();
+          });
+
+          markers.push(marker);
+        }
+
+        showStatus(`Loaded ${schools.length} schools`);
+      } catch (err) {
+        showStatus('Failed to load schools: ' + err.message, 5000);
+        console.error(err);
+      }
+    }
+
+    // Search/filter
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase().trim();
+      for (const marker of markers) {
+        const matches = !query || marker._schoolName.toLowerCase().includes(query);
+        if (matches) {
+          marker.addTo(map);
+        } else {
+          map.removeLayer(marker);
+        }
+      }
+    });
+
+    // Save changes
+    saveBtn.addEventListener('click', async () => {
+      if (pendingChanges.size === 0) return;
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+
+      const updates = [];
+      for (const [name, coords] of pendingChanges) {
+        updates.push({ name, lat: coords.lat, lng: coords.lng });
+      }
+
+      try {
+        const res = await fetch('/api/schools', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ updates }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        // Reset markers to default
+        for (const marker of markers) {
+          if (pendingChanges.has(marker._schoolName)) {
+            const pos = marker.getLatLng();
+            marker._originalLat = pos.lat;
+            marker._originalLng = pos.lng;
+            marker._icon.classList.remove('changed');
+          }
+        }
+
+        pendingChanges.clear();
+        updateSaveButton();
+        showStatus(`Saved! Updated ${data.updated} rows across ${data.schools} schools`);
+      } catch (err) {
+        showStatus('Save failed: ' + err.message, 5000);
+        console.error(err);
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+
+    loadSchools();
+  </script>
+</body>
+</html>

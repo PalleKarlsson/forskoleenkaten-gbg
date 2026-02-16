@@ -16,6 +16,7 @@ import {
   parseUnitMeans,
 } from "./charts.js";
 import { parseXlsFile } from "./xls.js";
+import { findOrCreateSchool } from "../school-helpers.js";
 
 async function getOrCreateQuestionArea(
   name: string,
@@ -251,10 +252,11 @@ async function parseSinglePdf(reportId: number, pdfPath: string) {
  * Parse an XLS file containing multiple units.
  * Creates separate school + pdf_reports entries for each unit found in the XLS.
  */
-async function parseXlsReport(reportId: number, xlsPath: string, year: number) {
+async function parseXlsReport(reportId: number, xlsPath: string, year: number, reportCategory: string = 'barn') {
   console.log(`  Parsing XLS: ${xlsPath}`);
 
-  const units = await parseXlsFile(xlsPath);
+  const format = reportCategory === 'foralder' ? 'foralder' : 'barn';
+  const units = await parseXlsFile(xlsPath, format as 'barn' | 'foralder');
   if (units.length === 0) {
     // Some XLS files have too few respondents (<7) and contain no data
     await query(
@@ -265,11 +267,10 @@ async function parseXlsReport(reportId: number, xlsPath: string, year: number) {
     return;
   }
 
-  // Look up the area for this report's school
+  // Look up the area and parent school for this report
   const reportInfo = await query(
-    `SELECT s.area_id, s.id as parent_school_id, pr.pdf_url
+    `SELECT pr.area_id, pr.school_id as parent_school_id, pr.pdf_url
      FROM pdf_reports pr
-     JOIN schools s ON pr.school_id = s.id
      WHERE pr.id = $1`,
     [reportId],
   );
@@ -278,25 +279,19 @@ async function parseXlsReport(reportId: number, xlsPath: string, year: number) {
 
   let unitCount = 0;
   for (const unit of units) {
-    // Create/find a school entry for this unit under the same area
-    const schoolResult = await query(
-      `INSERT INTO schools (area_id, name, url_slug, parent_school_id)
-       VALUES ($1, $2, $3, $4)
-       ON CONFLICT (area_id, url_slug) DO UPDATE SET name = $2, parent_school_id = $4
-       RETURNING id`,
-      [areaId, unit.unitName.trim(), unit.unitName.trim(), parentSchoolId],
-    );
-    const schoolId = schoolResult.rows[0].id;
+    // Create/find a school entry for this unit (deduped)
+    const rawName = unit.unitName.trim();
+    const schoolId = await findOrCreateSchool(rawName, rawName, areaId);
 
     // Create a pdf_reports entry with #sheetId fragment for uniqueness
     const unitPdfUrl = `${basePdfUrl}#${unit.sheetId}`;
     const unitReportResult = await query(
-      `INSERT INTO pdf_reports (school_id, year, report_type, unit_name, pdf_url, local_path, downloaded_at)
-       VALUES ($1, $2, 'unit', $3, $4, $5, NOW())
+      `INSERT INTO pdf_reports (school_id, year, report_type, unit_name, pdf_url, local_path, downloaded_at, area_id, parent_school_id, report_category)
+       VALUES ($1, $2, 'unit', $3, $4, $5, NOW(), $6, $7, $8)
        ON CONFLICT (pdf_url) DO UPDATE SET
-         school_id = $1, unit_name = $3, local_path = $5
+         school_id = $1, unit_name = $3, local_path = $5, area_id = $6, parent_school_id = $7, report_category = $8
        RETURNING id`,
-      [schoolId, year, unit.unitName.trim(), unitPdfUrl, xlsPath],
+      [schoolId, year, unit.unitName.trim(), unitPdfUrl, xlsPath, areaId, parentSchoolId, reportCategory],
     );
     const unitReportId = unitReportResult.rows[0].id;
 
@@ -372,7 +367,7 @@ async function main() {
   const force = args.includes("--force");
 
   let sql = `
-    SELECT id, local_path, year, pdf_url
+    SELECT id, local_path, year, pdf_url, COALESCE(report_category, 'barn') as report_category
     FROM pdf_reports
     WHERE downloaded_at IS NOT NULL
       AND local_path IS NOT NULL
@@ -408,7 +403,7 @@ async function main() {
     try {
       const isXls = /\.xlsx?$/i.test(row.local_path);
       if (isXls) {
-        await parseXlsReport(row.id, row.local_path, row.year);
+        await parseXlsReport(row.id, row.local_path, row.year, row.report_category);
       } else {
         await parseSinglePdf(row.id, row.local_path);
       }
